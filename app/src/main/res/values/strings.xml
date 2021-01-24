@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Movie Shelf</string>
+    <string name="error_no_network_connection">Tidak ada koneksi internet</string>
+</resources>

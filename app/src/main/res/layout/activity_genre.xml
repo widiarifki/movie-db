@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="android.view.View"/>
+        <variable name="isLoading" type="Boolean" />
+        <variable name="isError" type="Boolean" />
+        <variable name="message" type="String" />
+    </data>
+    <RelativeLayout
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/rvGenre"
+            android:visibility="@{isLoading ? View.GONE : View.VISIBLE}"/>
+        <include
+            android:id="@+id/layoutLoadingError"
+            layout="@layout/base_loading_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="@{isLoading || isError ? View.VISIBLE : View.GONE}"
+            app:isLoading="@{isLoading}"
+            app:message="@{message}"/>
+    </RelativeLayout>
+</layout>
