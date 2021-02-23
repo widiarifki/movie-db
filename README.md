@@ -1,6 +1,6 @@
 # Simple Movie DB
 
-Using API provided by [The MovieDB][TmdbL], the app retrieves list of genre movies, list of movies by genre, basic info & video trailer of a movie as well as user reviews of the movie.
+Using API provided by [The Movie DB][TmdbL], the app retrieves list of genre movies, list of movies by genre, basic info & video trailer of a movie as well as user reviews of the movie.
 
 Using Kotlin language and MVVM design architecture, here are some components that also used in the app..
 
