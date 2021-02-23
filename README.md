@@ -16,7 +16,7 @@ Using Kotlin language and MVVM design architecture, here are some components tha
 - Video Player: [Android YT Player][AndroidYTL]
 
 ### Negative Usecase covered
-- Handle error coming while doing API request (initial load & next page)
+- Handle error occured while doing API request (i.e: HTTP error, no connection)  on initial load and next page (listview)
 
 ### Screenshot
 ![Screenshot](https://github.com/widiarifki/movie-db/blob/main/_extras/screenshot.gif?raw=true)
