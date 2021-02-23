@@ -1,4 +1,6 @@
 <resources>
-    <string name="app_name">Movie Shelf</string>
-    <string name="error_no_network_connection">Tidak ada koneksi internet</string>
+    <string name="app_name">Movie DB</string>
+    <string name="msg_error_no_connection">Tidak ada koneksi internet</string>
+    <string name="msg_error_global">Gagal memuat atau memproses data</string>
+    <string name="msg_empty_movie">Tidak ditemukan film di kategori ini</string>
 </resources>

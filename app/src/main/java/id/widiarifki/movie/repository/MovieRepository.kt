@@ -1,23 +1,33 @@
 package id.widiarifki.movie.repository
 
-import id.widiarifki.movie.BaseApplication
-import id.widiarifki.movie.base.repository.APIRepository
-import id.widiarifki.movie.data.api.APIService
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import id.widiarifki.movie.data.network.APIService
 import id.widiarifki.movie.data.model.Movie
 import id.widiarifki.movie.data.model.Video
-import id.widiarifki.movie.helper.StatedData
+import id.widiarifki.movie.data.source.MoviePagingSource
+import id.widiarifki.movie.utils.StatedData
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class MovieRepository : APIRepository<Movie> {
+class MovieRepository
+@Inject constructor(
+    private val apiService: APIService
+) {
 
-    @Inject
-    lateinit var apiService: APIService
-
-    init {
-        BaseApplication.applicationComponent.inject(this)
+    companion object {
+        private const val NETWORK_PAGE_SIZE = 10
     }
 
-    override suspend fun getDetail(id: Int): StatedData<Movie> {
+    fun getMoviesByGenre(genreId: Int?): Flow<PagingData<Movie>> {
+        return Pager(
+            config = PagingConfig(enablePlaceholders = false, pageSize = NETWORK_PAGE_SIZE),
+            pagingSourceFactory = { MoviePagingSource(apiService, genreId) }
+        ).flow
+    }
+
+    suspend fun getDetail(id: Int): StatedData<Movie> {
         try {
             val data = StatedData<Movie>()
             val request = apiService.getMovieDetail(id)
@@ -49,14 +59,6 @@ class MovieRepository : APIRepository<Movie> {
         } catch (e: Exception) {
             throw Exception(e)
         }
-    }
-
-    override suspend fun refreshData() {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getList(): StatedData<List<Movie>?> {
-        TODO("Not yet implemented")
     }
 
 }

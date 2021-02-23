@@ -12,16 +12,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MovieDB">
-        <activity android:name=".feature.genre.GenreActivity">
+        <activity android:name=".presentation.genre.GenreActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".feature.movie.list.MovieListActivity"/>
-        <activity android:name=".feature.movie.detail.MovieDetailActivity"/>
-        <activity android:name=".feature.review.ReviewActivity"/>
+        <activity android:name=".presentation.movie.list.MovieListActivity"/>
+        <activity android:name=".presentation.movie.detail.MovieDetailActivity"/>
+        <activity android:name=".presentation.review.ReviewActivity"/>
     </application>
 
 </manifest>

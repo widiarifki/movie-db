@@ -6,17 +6,23 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import id.widiarifki.movie.data.network.APIService
+import id.widiarifki.movie.data.AppDatabase
+import id.widiarifki.movie.data.dao.GenreDao
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class NetworkModule {
+class DatabaseModule() {
 
     @Provides
     @Singleton
-    fun provideApiService(@ApplicationContext context: Context): APIService {
-        return APIService.create(context)
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
+        return AppDatabase.getInstance(context)
+    }
+
+    @Provides
+    fun provideGenreDao(appDatabase: AppDatabase): GenreDao {
+        return appDatabase.genreDao()
     }
 
 }

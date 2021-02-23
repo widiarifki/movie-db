@@ -7,11 +7,13 @@ import androidx.databinding.BindingAdapter
 import androidx.room.PrimaryKey
 import com.facebook.drawee.view.SimpleDraweeView
 import com.google.gson.annotations.SerializedName
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalField
+import java.util.*
 
 
 data class Review(
@@ -56,11 +58,10 @@ data class Review(
                 is TextView -> {
                     value?.let {
                         try {
-                            val serverFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-                            val dateTime = LocalDateTime.parse(it, serverFormat)
-                            dateTime?.let {
-                                val time = it.toInstant(ZoneOffset.UTC).toEpochMilli()
-                                view.text = DateUtils.getRelativeTimeSpanString(time, System.currentTimeMillis(), 0L, DateUtils.FORMAT_ABBREV_ALL)
+                            val serverFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+                            val formatter = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+                            serverFormat.parse(it)?.let {
+                                view.text = formatter.format(it)
                             }
                         } catch (e: Exception) {
                         }

@@ -4,6 +4,7 @@ import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.room.PrimaryKey
 import com.facebook.drawee.view.SimpleDraweeView
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -58,7 +59,6 @@ data class Movie(
     companion object {
         const val POSTER_URL = "https://www.themoviedb.org/t/p/w185"
         const val BACKDROP_URL = "https://www.themoviedb.org/t/p/w500"
-        const val DEFAULT_PAGE_SIZE = 20
 
         @JvmStatic @BindingAdapter("app:backdropUrl")
         fun setBackdropUrl(view: View, value: String?) {
@@ -88,11 +88,10 @@ data class Movie(
                 is TextView -> {
                     value?.let {
                         try {
-                            val serverFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                            val date = LocalDate.parse(it, serverFormat)
-                            val myFormat = DateTimeFormatter.ofPattern("dd MMM yyyy")
-                            date?.let {
-                                view.text = date.format(myFormat)
+                            val serverFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                            val formatter = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+                            serverFormat.parse(it)?.let {
+                                view.text = formatter.format(it)
                             }
                         } catch (e: Exception) {
                         }
@@ -113,9 +112,10 @@ data class Movie(
                             min = serverVal.rem(60)
                         }
 
-                        view.text = String.format("%s%s",
-                            if(hour > 0) "$hour hour " else "",
-                            if(min > 0) "$min min" else ""
+                        view.text = String.format(
+                            "%s%s",
+                            if (hour > 0) "$hour hour " else "",
+                            if (min > 0) "$min min" else ""
                         )
                     }
                 }
@@ -127,7 +127,13 @@ data class Movie(
             when(view) {
                 is TextView -> {
                     value?.let {
-                        view.text = String.format("%s / 10", it)
+                        //view.text = String.format("%s / 10", it)
+                        view.text = String.format("%s", it)
+                    }
+                }
+                is CircularProgressIndicator -> {
+                    value?.let {
+                        view.progress = (it * 10).toInt()
                     }
                 }
             }
