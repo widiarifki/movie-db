@@ -2,8 +2,6 @@
 
 Using API provided by [The MovieDB][TmdbL], the app retrieves list of genre movies, list of movies by genre, basic info & video trailer of a movie as well as user reviews of the movie.
 
-![Screenshot](https://github.com/widiarifki/movie-db/blob/main/_extras/screenshot.gif?raw=true)
-
 Using Kotlin language and MVVM design architecture, here are some components that also used in the app..
 
 ### Jetpack Components
@@ -19,6 +17,9 @@ Using Kotlin language and MVVM design architecture, here are some components tha
 
 ### Negative Usecase covered
 - Handle error coming while doing API request (initial load & next page)
+
+### Screenshot
+![Screenshot](https://github.com/widiarifki/movie-db/blob/main/_extras/screenshot.gif?raw=true)
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
 
