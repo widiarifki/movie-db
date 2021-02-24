@@ -16,7 +16,7 @@ Using **Kotlin** language and **MVVM** design architecture, here are some compon
 - Video Player: [Android YT Player][AndroidYTL]
 
 ### Folder structure
-`
+```
 app
 ├── base: contains abstract classes that will frequently implemented by another app components (i.e: activity)
 ├── data: contains code concerns about data, its modelling, its access
@@ -28,7 +28,7 @@ app
 ├── repository: contains code concerns about how the presentation/view will interact with data
 ├── utils: contains helper classes and objects
 └── BaseApplication.kt
-`
+```
 
 ### Negative usecase covered
 - Handle error occurs while doing API request (i.e: HTTP error, no connection) on initial load and next page (listview)
