@@ -3,4 +3,5 @@
     <string name="msg_error_no_connection">Tidak ada koneksi internet</string>
     <string name="msg_error_global">Gagal memuat atau memproses data</string>
     <string name="msg_empty_movie">Tidak ditemukan film di kategori ini</string>
+    <string name="msg_empty_category">Tidak ditemukan data kategori</string>
 </resources>

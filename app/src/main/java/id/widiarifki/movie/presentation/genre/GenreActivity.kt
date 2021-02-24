@@ -48,27 +48,18 @@ class GenreActivity : BaseActivity<ActivityGenreBinding>(),
 
     private fun observeData() {
         viewModel.genresLiveData.observe(this, {
-            when {
-                it.isLoading() -> binding.isLoading = true
-                it.isSuccess() -> {
-                    binding.isLoading = false
-                    if (it.data.isNullOrEmpty()){
-                        binding.isError = true
-                        binding.message = "Tidak menemukan kategori"
-                    } else {
-                        binding.isError = false
-                        setAdapterData(it.data)
-                    }
+            binding.isLoading = it.isLoading()
+            binding.isError = it.isFail() || it.data.isNullOrEmpty()
+            if (it.data?.isNotEmpty() == true){
+                setAdapterData(it.data)
+                if (it.isFail()) {
+                    showToast(it.message)
                 }
-                it.isFail() -> {
-                    binding.isLoading = false
-                    if (it.data.isNullOrEmpty()) {
-                        binding.isError = true
-                        binding.message = it.message
-                    } else {
-                        binding.isError = false
-                        showToast(it.message)
-                    }
+            } else {
+                if (it.isFail()) {
+                    binding.message = it.message
+                } else {
+                    binding.message = getString(R.string.msg_empty_category)
                 }
             }
         })

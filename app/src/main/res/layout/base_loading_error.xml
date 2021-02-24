@@ -17,7 +17,7 @@
             android:layout_centerInParent="true"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:visibility="@{isLoading  ? View.GONE : View.VISIBLE}">
+            android:visibility="@{isLoading ? View.GONE : View.VISIBLE, default=gone}">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
