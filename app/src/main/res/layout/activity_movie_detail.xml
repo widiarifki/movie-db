@@ -7,6 +7,7 @@
         <variable name="isError" type="Boolean" />
         <variable name="message" type="String" />
         <variable name="data" type="id.widiarifki.movie.data.model.Movie" />
+        <variable name="isTrailerLoading" type="Boolean" />
         <variable name="isTrailerReady" type="Boolean" />
         <variable name="isTrailerPlaying" type="Boolean" />
     </data>
@@ -41,7 +42,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
-                            android:visibility="@{isTrailerReady ? View.VISIBLE : View.GONE}"
+                            android:visibility="@{isTrailerReady ? View.VISIBLE : View.GONE, default=gone}"
                             android:text="Putar Trailer"
                             android:onClick="playVideoTrailer"/>
                     </RelativeLayout>
@@ -53,6 +54,11 @@
                         app:showFullScreenButton="false"
                         app:autoPlay="false"
                         android:visibility="@{isTrailerReady &amp;&amp; isTrailerPlaying  ? View.VISIBLE : View.GONE}"/>
+                    <ProgressBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:visibility="@{isTrailerLoading ? View.VISIBLE : View.GONE, default=visible}"/>
                 </RelativeLayout>
                 <LinearLayout
                     android:layout_width="match_parent"

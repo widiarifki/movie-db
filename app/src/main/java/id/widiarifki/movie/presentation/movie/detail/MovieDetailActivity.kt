@@ -48,29 +48,18 @@ class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
     }
 
     private fun observeData() {
-        viewModel.getDetailInfo(movieId).observe(this, Observer {
-            when {
-                it.isLoading() -> binding.isLoading = true
-                it.isSuccess() -> {
-                    binding.data = it.data
-                    binding.isLoading = false
-                    binding.isError = false
-                }
-                it.isFail() -> {
-                    binding.isLoading = false
-                    binding.isError = true
-                    binding.message = it.message
-                }
-            }
+        viewModel.getDetailInfo(movieId).observe(this, {
+            binding.isLoading = it.isLoading()
+            binding.isError = it.isFail()
+            binding.message = if (it.isFail()) it.message else null
+            binding.data = it.data
         })
 
-        viewModel.getYoutoubeTrailerVideo(movieId).observe(this, Observer {
-            when {
-                it.isSuccess() -> {
-                    it.data?.key?.let { videoId ->
-                        binding.isTrailerReady = true
-                        setupPlayer(videoId)
-                    }
+        viewModel.getYoutoubeTrailerVideo(movieId).observe(this, {
+            binding.isTrailerLoading = true
+            if (it.isSuccess()) {
+                it.data?.key?.let { videoId ->
+                    setupPlayer(videoId)
                 }
             }
         })
@@ -83,7 +72,8 @@ class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
                 override fun onReady(youTubePlayer: YouTubePlayer) {
                     super.onReady(youTubePlayer)
                     youTubePlayer.cueVideo(videoId, 0f)
-                    //binding.isTrailerReady = true
+                    binding.isTrailerLoading = false
+                    binding.isTrailerReady = true
                     mYoutubePlayer = youTubePlayer
                 }
 
@@ -108,6 +98,7 @@ class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
                     error: PlayerConstants.PlayerError
                 ) {
                     super.onError(youTubePlayer, error)
+                    binding.isTrailerLoading = false
                     binding.isTrailerPlaying = false
                     showToast(error.name)
                 }
