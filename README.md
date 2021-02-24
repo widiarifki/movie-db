@@ -18,15 +18,15 @@ Using **Kotlin** language and **MVVM** design architecture, here are some compon
 ### Folder structure & documentation
 ```
 app
-├── **base**: contains abstract classes that will frequently reused/implemented by another app components (i.e: activity)
-├── **data**: contains code concerns about data, its modelling, its access
-|   ├── **local**: contains code concerns about accessing to local data
-|   ├── **model**: contains data entity model classes
-|   └── **di**: contains webservice/api interface & api response wrapper class
-├── **di**: contains dependency injection code, defining modules where another code will frequently dependent on it
-├── **presentation**: contains code concerns about how the app will be presented. Categorized/foldered by single UI screen, one folder will define the activity and the viewmodel attached to the activity
-├── **repository**: contains code concerns about how the presentation/view will interact with data
-└── **utils**: contains helper classes and objects
+├── base: contains abstract classes that will frequently reused/implemented by another app components (i.e: activity)
+├── data: contains code concerns about data, its modelling, its access
+|   ├── local: contains code concerns about accessing to local data
+|   ├── model: contains data entity model classes
+|   └── di: contains webservice/api interface & api response wrapper class
+├── di: contains dependency injection code, defining modules where another code will frequently dependent on it
+├── presentation: contains code concerns about how the app will be presented. Categorized/foldered by single UI screen, one folder will define the activity and the viewmodel attached to the activity
+├── repository: contains code concerns about how the presentation/view will interact with data
+└── utils: contains helper classes and objects
 ```
 
 ### Negative usecase covered
