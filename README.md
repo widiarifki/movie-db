@@ -1,6 +1,6 @@
 # Simple Movie DB
 
-Using API provided by [The Movie DB][TmdbL], the app retrieves movie genres, movies by genre, basic info & video trailer of a movie as well as movie reviews.
+Using API provided by [The Movie DB][TmdbL], the app retrieves movie genres, movies by genre, movie detail (basic info & video trailer), and movie reviews.
 
 Using **Kotlin** language and **MVVM** design architecture, here are some components that also used in the app..
 
@@ -31,7 +31,7 @@ app
 ```
 
 ### Negative usecase covered
-- Handle error occured while doing API request (i.e: HTTP error, no connection)  on initial load and next page (listview)
+- Handle error occured while doing API request (i.e: HTTP error, no connection) on initial load and next page (listview)
 
 ### Screenshot
 ![Screenshot](https://github.com/widiarifki/movie-db/blob/main/_extras/screenshot2.gif?raw=true)
