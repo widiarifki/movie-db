@@ -21,8 +21,8 @@ app
 ├── base: contains abstract classes that will frequently reused/implemented by another app components (i.e: activity)
 ├── data: contains code concerns about data, its modelling, its access
 |   ├── local: contains code concerns about accessing to local data
-|   ├── model: contains data entity model classes
-|   └── di: contains webservice/api interface & api response wrapper class
+|   ├── model: contains entity model classes
+|   └── network: contains web API interface & response wrapper class
 ├── di: contains dependency injection code, defining modules where another code will frequently dependent on it
 ├── presentation: contains code concerns about how the app will be presented. Categorized/foldered by single UI screen, one folder will define the activity and the viewmodel attached to the activity
 ├── repository: contains code concerns about how the presentation/view will interact with data
