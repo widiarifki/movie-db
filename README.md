@@ -15,7 +15,7 @@ Using **Kotlin** language and **MVVM** design architecture, here are some compon
 - Image Loader: [Fresco][FrescoL]
 - Video Player: [Android YT Player][AndroidYTL]
 
-### Folder structure & documentation
+### Folder structure
 ```
 app
 ├── base: contains abstract classes that will frequently reused/implemented by another app components (i.e: activity)
