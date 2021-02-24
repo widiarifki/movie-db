@@ -8,7 +8,7 @@ Using **Kotlin** language and **MVVM** design architecture, here are some compon
 - [Hilt Dependency Injection (v2.31.2-alpha)][HiltL]
 - [Room DB (v2.2.6)][RoomL]
 - [Data Binding][DataBindingL]
-- [Paging 3 Library (3.0.0-beta01)][Paging3L]
+- [Paging 3 Library (v3.0.0-beta01)][Paging3L]
 
 ### Third Party Components
 - Network Request: [Retrofit 2][RetrofitL], [OkHttp][OkHttpL], [Gson Converter][GsonL]
