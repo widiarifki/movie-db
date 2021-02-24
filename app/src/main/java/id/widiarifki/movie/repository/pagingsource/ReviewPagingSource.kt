@@ -1,29 +1,23 @@
-package id.widiarifki.movie.data.source
+package id.widiarifki.movie.repository.pagingsource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import id.widiarifki.movie.data.network.APIService
-import id.widiarifki.movie.data.model.Movie
+import id.widiarifki.movie.data.model.Review
 import retrofit2.HttpException
 import java.io.IOException
 
-/**
- * Deferred from PagingSource<Key, Value>
- * PagingSource takes two parameters, a key and a value.
- * Key defines what data to load. E.g. Int as a page number or String as a next page token.
- * Value defines the type of data that will be loaded
- */
-class MoviePagingSource(
+class ReviewPagingSource(
     private val apiService: APIService,
-    private val genreId: Int?
-): PagingSource<Int, Movie>() {
+    private val movieId: Int?
+) : PagingSource<Int, Review>() {
 
     private val DEFAULT_STARTING_PAGE = 1
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Movie> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Review> {
         val page = params.key ?: 1
         try {
-            val response = apiService.getMovieByGenre(genreId, page)
+            val response = apiService.getMovieReviews(movieId, page)
             val movies = response.results.orEmpty()
             return LoadResult.Page(
                 data = movies,
@@ -39,7 +33,7 @@ class MoviePagingSource(
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Int, Movie>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, Review>): Int? {
         return state.anchorPosition?.let {
             state.closestPageToPosition(it)?.prevKey?.plus(1)
                 ?: state.closestPageToPosition(it)?.nextKey?.minus(1)

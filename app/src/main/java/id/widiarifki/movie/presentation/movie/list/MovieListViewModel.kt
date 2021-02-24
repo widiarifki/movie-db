@@ -16,7 +16,7 @@ class MovieListViewModel
 ) : ViewModel() {
 
     fun getMovies(genreId: Int?) : Flow<PagingData<Movie>> {
-        return repository.getMoviesByGenre(genreId).cachedIn(viewModelScope)
+        return repository.getPagingMovies(genreId).cachedIn(viewModelScope)
     }
 
 }

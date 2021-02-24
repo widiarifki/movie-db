@@ -1,10 +1,10 @@
-package id.widiarifki.movie.data
+package id.widiarifki.movie.data.local
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import id.widiarifki.movie.data.dao.GenreDao
+import id.widiarifki.movie.data.local.dao.GenreDao
 import id.widiarifki.movie.data.model.Genre
 
 @Database(entities = [Genre::class], version = DatabaseConstant.DB_VERSION)

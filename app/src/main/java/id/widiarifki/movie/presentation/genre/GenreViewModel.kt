@@ -15,13 +15,19 @@ class GenreViewModel
     private val repository: GenreRepository
 ): ViewModel() {
 
-    private val cacheGenres = repository.cache
-    val liveGenres = StatedLiveData<List<Genre>?>()
+    val genresLiveData = StatedLiveData<List<Genre>?>()
 
     init {
-        liveGenres.addSource(cacheGenres) {
+        /**
+         * Livedata will first get and load genre saved in local/RoomDB,
+         * while also making request to retrieve fresh data from network.
+         * This way even tho a failure occured while doing network request,
+         * the UI will not be empty because genre data had been cached/stored on local
+         * as a result from previous success network request
+         */
+        genresLiveData.addSource(repository.cache) {
             if (it?.isNotEmpty() == true)
-                liveGenres.loaded(it)
+                genresLiveData.loaded(it)
         }
 
         refreshGenre()
@@ -30,12 +36,12 @@ class GenreViewModel
     fun refreshGenre() {
         viewModelScope.launch {
             try {
-                if (liveGenres.value?.data.isNullOrEmpty()) {
-                    liveGenres.loading()
+                if (genresLiveData.value?.data.isNullOrEmpty()) {
+                    genresLiveData.loading()
                 }
                 repository.refreshData()
             } catch (e: Exception) {
-                liveGenres.fail(e.message)
+                genresLiveData.fail(e.message)
             }
         }
     }

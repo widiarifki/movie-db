@@ -6,8 +6,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import id.widiarifki.movie.data.AppDatabase
-import id.widiarifki.movie.data.dao.GenreDao
+import id.widiarifki.movie.data.local.AppDatabase
+import id.widiarifki.movie.data.local.dao.GenreDao
 import javax.inject.Singleton
 
 @Module

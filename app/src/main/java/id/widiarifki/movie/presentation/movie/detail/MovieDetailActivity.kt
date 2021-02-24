@@ -48,7 +48,7 @@ class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
     }
 
     private fun observeData() {
-        viewModel.getMovie(movieId).observe(this, Observer {
+        viewModel.getDetailInfo(movieId).observe(this, Observer {
             when {
                 it.isLoading() -> binding.isLoading = true
                 it.isSuccess() -> {
@@ -64,7 +64,7 @@ class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
             }
         })
 
-        viewModel.getTrailer(movieId).observe(this, Observer {
+        viewModel.getYoutoubeTrailerVideo(movieId).observe(this, Observer {
             when {
                 it.isSuccess() -> {
                     it.data?.key?.let { videoId ->

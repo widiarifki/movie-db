@@ -15,7 +15,7 @@ class ReviewViewModel
 ): ViewModel() {
 
     fun getReviews(movieId: Int?) : Flow<PagingData<Review>> {
-        return repository.getReviews(movieId)
+        return repository.getPagingReviews(movieId)
     }
 
 }

@@ -1,4 +1,4 @@
-package id.widiarifki.movie.data
+package id.widiarifki.movie.data.local
 
 object DatabaseConstant {
     const val DB_NAME = "db_movie"

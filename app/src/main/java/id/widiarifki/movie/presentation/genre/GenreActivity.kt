@@ -47,7 +47,7 @@ class GenreActivity : BaseActivity<ActivityGenreBinding>(),
     }
 
     private fun observeData() {
-        viewModel.liveGenres.observe(this, {
+        viewModel.genresLiveData.observe(this, {
             when {
                 it.isLoading() -> binding.isLoading = true
                 it.isSuccess() -> {

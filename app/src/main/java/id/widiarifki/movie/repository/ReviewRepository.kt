@@ -5,7 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import id.widiarifki.movie.data.network.APIService
 import id.widiarifki.movie.data.model.Review
-import id.widiarifki.movie.data.source.ReviewPagingSource
+import id.widiarifki.movie.repository.pagingsource.ReviewPagingSource
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -18,7 +18,7 @@ class ReviewRepository
         private const val NETWORK_PAGE_SIZE = 10
     }
 
-    fun getReviews(movieId: Int?): Flow<PagingData<Review>> {
+    fun getPagingReviews(movieId: Int?): Flow<PagingData<Review>> {
         return Pager(
             config = PagingConfig(enablePlaceholders = false, pageSize = NETWORK_PAGE_SIZE),
             pagingSourceFactory = { ReviewPagingSource(apiService, movieId) }

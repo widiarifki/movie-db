@@ -16,7 +16,7 @@ class MovieDetailViewModel
     private val repository: MovieRepository
 ): ViewModel() {
 
-    fun getMovie(movieId: Int?) : StatedLiveData<Movie> {
+    fun getDetailInfo(movieId: Int?) : StatedLiveData<Movie> {
         val liveData = StatedLiveData<Movie>()
         liveData.loading()
 
@@ -40,7 +40,7 @@ class MovieDetailViewModel
         return liveData
     }
 
-    fun getTrailer(movieId: Int?) : StatedLiveData<Video> {
+    fun getYoutoubeTrailerVideo(movieId: Int?) : StatedLiveData<Video> {
         val liveData = StatedLiveData<Video>()
         liveData.loading()
 

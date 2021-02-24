@@ -6,7 +6,7 @@ import androidx.paging.PagingData
 import id.widiarifki.movie.data.network.APIService
 import id.widiarifki.movie.data.model.Movie
 import id.widiarifki.movie.data.model.Video
-import id.widiarifki.movie.data.source.MoviePagingSource
+import id.widiarifki.movie.repository.pagingsource.MoviePagingSource
 import id.widiarifki.movie.utils.StatedData
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -20,7 +20,7 @@ class MovieRepository
         private const val NETWORK_PAGE_SIZE = 10
     }
 
-    fun getMoviesByGenre(genreId: Int?): Flow<PagingData<Movie>> {
+    fun getPagingMovies(genreId: Int?): Flow<PagingData<Movie>> {
         return Pager(
             config = PagingConfig(enablePlaceholders = false, pageSize = NETWORK_PAGE_SIZE),
             pagingSourceFactory = { MoviePagingSource(apiService, genreId) }

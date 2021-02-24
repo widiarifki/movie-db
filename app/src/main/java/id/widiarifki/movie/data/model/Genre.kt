@@ -2,7 +2,7 @@ package id.widiarifki.movie.data.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
-import id.widiarifki.movie.data.DatabaseConstant
+import id.widiarifki.movie.data.local.DatabaseConstant
 
 @Entity(tableName = DatabaseConstant.TBL_GENRE)
 data class Genre(
