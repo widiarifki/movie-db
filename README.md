@@ -1,8 +1,8 @@
 # Simple Movie DB
 
-Using API provided by [The Movie DB][TmdbL], the app retrieves list of genre movies, list of movies by genre, basic info & video trailer of a movie as well as user reviews of the movie.
+Using API provided by [The Movie DB][TmdbL], the app retrieves movie genres, movies by genre, basic info & video trailer of a movie as well as movie reviews.
 
-Using Kotlin language and MVVM design architecture, here are some components that also used in the app..
+Using **Kotlin** language and **MVVM** design architecture, here are some components that also used in the app..
 
 ### Jetpack Components
 - [Hilt Dependency Injection (v2.31.2-alpha)][HiltL]
@@ -10,12 +10,26 @@ Using Kotlin language and MVVM design architecture, here are some components tha
 - [Data Binding][DataBindingL]
 - [Paging 3 Library (3.0.0-beta01)][Paging3L]
 
-### Third Party Component
+### Third Party Components
 - Network Request: [Retrofit 2][RetrofitL], [OkHttp][OkHttpL], [Gson Converter][GsonL]
 - Image Loader: [Fresco][FrescoL]
 - Video Player: [Android YT Player][AndroidYTL]
 
-### Negative Usecase covered
+### Folder structure & documentation
+```
+app
+├── **base**: contains abstract classes that will frequently reused/implemented by another app components (i.e: activity)
+├── **data**: contains code concerns about data, its modelling, its access
+|   ├── **local**: contains code concerns about accessing to local data
+|   ├── **model**: contains data entity model classes
+|   └── **di**: contains webservice/api interface & api response wrapper class
+├── **di**: contains dependency injection code, defining modules where another code will frequently dependent on it
+├── **presentation**: contains code concerns about how the app will be presented. Categorized/foldered by single UI screen, one folder will define the activity and the viewmodel attached to the activity
+├── **repository**: contains code concerns about how the presentation/view will interact with data
+└── **utils**: contains helper classes and objects
+```
+
+### Negative usecase covered
 - Handle error occured while doing API request (i.e: HTTP error, no connection)  on initial load and next page (listview)
 
 ### Screenshot
