@@ -18,7 +18,7 @@ Using **Kotlin** language and **MVVM** design architecture, here are some compon
 ### Folder structure
 ```
 app
-├── base: contains abstract classes that will frequently reused/implemented by another app components (i.e: activity)
+├── base: contains abstract classes that will frequently implemented by another app components (i.e: activity)
 ├── data: contains code concerns about data, its modelling, its access
 |   ├── local: contains code concerns about accessing to local data
 |   ├── model: contains entity model classes
