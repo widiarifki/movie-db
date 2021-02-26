@@ -1,12 +1,11 @@
 package id.widiarifki.movie.presentation.movie.detail
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import id.widiarifki.movie.data.model.Movie
-import id.widiarifki.movie.data.model.Video
+import id.widiarifki.movie.data.model.MovieStatus
 import id.widiarifki.movie.repository.MovieRepository
-import id.widiarifki.movie.utils.StatedLiveData
+import id.widiarifki.movie.utils.livedata.StatedLiveData
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,50 +15,125 @@ class MovieDetailViewModel
     private val repository: MovieRepository
 ): ViewModel() {
 
-    fun getDetailInfo(movieId: Int?) : StatedLiveData<Movie> {
-        val liveData = StatedLiveData<Movie>()
-        liveData.loading()
+    fun getAllDetail(movieId: Int) : StatedLiveData<Movie> {
+        val mediatorLiveData = StatedLiveData<Movie>()
+        var movie: Movie? = null
 
-        viewModelScope.launch {
-            try {
-                movieId?.let {
-                    val stateMovie = repository.getDetail(it)
-                    if (stateMovie.data != null)
-                        liveData.loaded(stateMovie.data)
-                    else
-                        liveData.fail(stateMovie.message)
-                } ?: run {
-                    liveData.fail("ID tidak diketahui")
-                }
+        try {
+            /**
+             * Chaining request
+             * #1 Request, get detail of movie. @return StatedData<Movie>
+             * #2 Request, get youtube key. @return String
+             * #3 Request, get movie status (watchlist/favorite/etc). @return MovieStatus
+             */
 
-            } catch (e: Exception) {
-                liveData.fail(e.message)
-            }
-        }
+            // #1
+            viewModelScope.launch {
+                mediatorLiveData.addSource(repository.getLiveDetail(movieId)) {
+                    when {
+                        it.isSuccess() -> {
+                            movie = it?.data
+                            mediatorLiveData.load(movie)
 
-        return liveData
-    }
+                            // #2
+                            viewModelScope.launch {
+                                mediatorLiveData.addSource(getYtTrailerKey(movieId)) {
+                                    movie?.ytTrailerKey = it
+                                    mediatorLiveData.load(movie)
 
-    fun getYoutoubeTrailerVideo(movieId: Int?) : StatedLiveData<Video> {
-        val liveData = StatedLiveData<Video>()
-        liveData.loading()
-
-        viewModelScope.launch {
-            try {
-                movieId?.let {
-                    val stateVideos = repository.getVideos(it)
-                    val trailerVideo = stateVideos.data?.firstOrNull {
-                        it.site.equals("YouTube", true) && it.type.equals("Trailer", true)
+                                    // #3
+                                    viewModelScope.launch {
+                                        mediatorLiveData.addSource(getMovieStatus(movieId)) {
+                                            movie?.isWatchlist = it?.watchlist
+                                            mediatorLiveData.load(movie)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        it.isError() -> {
+                            mediatorLiveData.error(it.getMessage())
+                        }
+                        else -> {
+                            mediatorLiveData.loading()
+                        }
                     }
-                    liveData.loaded(trailerVideo)
-                } ?: run {
-                    liveData.fail("ID tidak diketahui")
                 }
-            } catch (e: Exception) {
-                liveData.fail(e.message)
             }
+        } catch (e: Exception) {
+            mediatorLiveData.error(e.message)
         }
 
+        return mediatorLiveData
+    }
+
+    private suspend fun getYtTrailerKey(movieId: Int): LiveData<String?> = Transformations.map(
+            repository.getLiveTrailer(movieId)
+    ) {
+        it.data?.key
+    }
+
+    private suspend fun getMovieStatus(movieId: Int): LiveData<MovieStatus?> = Transformations.map(repository.getLiveStatus(movieId)) {
+        it.data
+    }
+
+    fun addToWatchlist(movieId: Int?): StatedLiveData<Boolean> {
+        val liveData: StatedLiveData<Boolean> = StatedLiveData()
+        viewModelScope.launch {
+            val result = repository.addToWatchlist(movieId)
+            if (result.isSuccess()) {
+                liveData.success()
+            } else {
+                liveData.error(result.getMessage())
+            }
+        }
         return liveData
     }
+
+    /*private fun getMovieDetail(movieId: Int) : StatedLiveData<Movie> {
+        val liveData = StatedLiveData<Movie>()
+        viewModelScope.launch {
+            try {
+                val result = repository.getDetail(movieId)
+                if (result.data != null) {
+                    liveData.loaded(result.data)
+                }
+                else
+                    liveData.error(result.getMessage())
+            } catch (e: Exception) {
+                liveData.error(e.message)
+            }
+        }
+        return liveData
+    }*/
+
+    /*private fun getVideoTrailer(movieId: Int) : StatedLiveData<Video> {
+        val liveData = StatedLiveData<Video>()
+        viewModelScope.launch {
+            try {
+                val result = repository.getVideoTrailer(movieId)
+                if (result.isSuccess()) {
+                    liveData.loaded(result.data)
+                } else {
+                    liveData.error(result.getMessage())
+                }
+            } catch (e: Exception) {
+                liveData.error(e.message)
+            }
+        }
+        return liveData
+    }*/
+
+    /*private fun getMovieStatus(movieId: Int?): StatedLiveData<MovieStatus> {
+        val liveData: StatedLiveData<MovieStatus> = StatedLiveData()
+        viewModelScope.launch {
+            val result = repository.getLiveMovieStatus(movieId)
+            if (result.isSuccess()) {
+                liveData.success()
+            } else {
+                liveData.error(result.getMessage())
+            }
+        }
+        return liveData
+    }*/
 }

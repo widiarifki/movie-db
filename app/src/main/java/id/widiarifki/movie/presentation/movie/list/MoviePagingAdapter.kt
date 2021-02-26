@@ -1,5 +1,8 @@
 package id.widiarifki.movie.presentation.movie.list
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
@@ -8,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import id.widiarifki.movie.R
 import id.widiarifki.movie.data.model.Movie
 import id.widiarifki.movie.databinding.ItemMovieBinding
+import id.widiarifki.movie.presentation.movie.detail.MovieDetailActivity
+import id.widiarifki.movie.utils.Constant
 
 class MoviePagingAdapter : PagingDataAdapter<Movie, MoviePagingAdapter.ItemMovieHolder>(DiffCallback()) {
 
@@ -19,12 +24,23 @@ class MoviePagingAdapter : PagingDataAdapter<Movie, MoviePagingAdapter.ItemMovie
 
         data?.let {
             viewBinding.data = it
-            itemListener?.let { action ->
+            itemListener?.let { customAction ->
                 viewBinding.root.setOnClickListener {
-                    action.onClickMovie(data)
+                    customAction.onClickMovie(data)
+                }
+            } ?: kotlin.run {
+                viewBinding.root.setOnClickListener {
+                    onClickMovie(data, holder.binding.root.context)
                 }
             }
         }
+    }
+
+    private fun onClickMovie(data: Movie, context: Context) {
+        val intent = Intent(context, MovieDetailActivity::class.java)
+        intent.putExtra(Constant.PARAM_MOVIE_ID, data.id)
+        intent.putExtra(Constant.PARAM_MOVIE_NAME, data.title)
+        (context as? Activity)?.startActivity(intent)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemMovieHolder {

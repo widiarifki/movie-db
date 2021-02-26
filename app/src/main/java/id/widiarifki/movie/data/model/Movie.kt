@@ -2,6 +2,7 @@ package id.widiarifki.movie.data.model
 import android.view.View
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.facebook.drawee.view.SimpleDraweeView
 import com.google.android.material.progressindicator.CircularProgressIndicator
@@ -54,7 +55,12 @@ data class Movie(
     @SerializedName("vote_average")
     var voteAverage: Double?,
     @SerializedName("vote_count")
-    var voteCount: Int?
+    var voteCount: Int?,
+
+    @Ignore
+    var isWatchlist: Boolean?,
+    @Ignore
+    var ytTrailerKey: String?
 ) {
     companion object {
         const val POSTER_URL = "https://www.themoviedb.org/t/p/w185"

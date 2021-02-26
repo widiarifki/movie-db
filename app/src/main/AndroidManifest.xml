@@ -15,13 +15,13 @@
         <activity android:name=".presentation.genre.GenreActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".presentation.movie.list.MovieListActivity"/>
         <activity android:name=".presentation.movie.detail.MovieDetailActivity"/>
         <activity android:name=".presentation.review.ReviewActivity"/>
+        <activity android:name=".presentation.watchlist.WatchlistActivity"/>
     </application>
 
 </manifest>

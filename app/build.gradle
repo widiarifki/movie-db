@@ -18,6 +18,8 @@ android {
 
         buildConfigField "String", "BASE_URL", "\"https://api.themoviedb.org/3/\""
         buildConfigField "String", "API_KEY", "\"" + getApiKey() + "\""
+        buildConfigField "String", "ACCOUNT_ID", "\"" + getAccountId() + "\""
+        buildConfigField "String", "SESSION_ID", "\"" + getSessionId() + "\""
     }
     buildTypes {
         release {
@@ -75,4 +77,12 @@ dependencies {
 
 def getApiKey() {
     return project.findProperty("api_key")
+}
+
+def getAccountId() {
+    return project.findProperty("account_id")
+}
+
+def getSessionId() {
+    return project.findProperty("session_id")
 }

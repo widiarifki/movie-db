@@ -19,8 +19,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MovieListActivity : BaseActivity<ActivityMovieListBinding>(),
-    MoviePagingAdapter.ItemMovieListener {
+class MovieListActivity : BaseActivity<ActivityMovieListBinding>() {
 
     private val viewModel: MovieListViewModel by viewModels()
     private val movieAdapter = MoviePagingAdapter()
@@ -56,7 +55,6 @@ class MovieListActivity : BaseActivity<ActivityMovieListBinding>(),
     }
 
     private fun setupListener() {
-        movieAdapter.itemListener = this
         binding.refreshLayout.setOnRefreshListener {
             movieAdapter.refresh()
         }
@@ -85,15 +83,6 @@ class MovieListActivity : BaseActivity<ActivityMovieListBinding>(),
                     }
                 }
             }
-        }
-    }
-
-    override fun onClickMovie(data: Movie?) {
-        data?.let {
-            val intent = Intent(this, MovieDetailActivity::class.java)
-            intent.putExtra(Constant.PARAM_MOVIE_ID, it.id)
-            intent.putExtra(Constant.PARAM_MOVIE_NAME, it.title)
-            startActivity(intent)
         }
     }
 }

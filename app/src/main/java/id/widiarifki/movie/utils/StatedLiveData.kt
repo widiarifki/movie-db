@@ -4,19 +4,33 @@ import androidx.lifecycle.MediatorLiveData
 
 class StatedLiveData<T> : MediatorLiveData<StatedData<T>>() {
 
-    fun loading(message: String? = null) {
-        val state = State.setLoading(message)
-        postValue(StatedData(state))
+    var state: StatedData<T> = StatedData()
+
+    init {
+        state = StatedData(State.setLoading())
     }
 
-    fun loaded(data: T? = null, message: String? = null) {
-        val state = State.setSuccess(message)
-        postValue(StatedData(state, data))
+    fun loading() {
+        postValue(state.loading())
+    }
+
+    fun loaded(data: T? = null) {
+        postValue(state.success(data))
+    }
+
+    fun success() {
+        postValue(state.success())
     }
 
     fun fail(message: String?) {
-        val state = State.setFailed(message)
-        postValue(StatedData(state))
+        postValue(state.fail(message))
     }
 
+    fun fail(throwable: Throwable?) {
+        postValue(state.fail(throwable))
+    }
+
+    fun postStateData(data: StatedData<T>) {
+        super.postValue(data)
+    }
 }

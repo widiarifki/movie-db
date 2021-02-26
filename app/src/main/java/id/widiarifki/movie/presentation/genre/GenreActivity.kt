@@ -2,6 +2,8 @@ package id.widiarifki.movie.presentation.genre
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,6 +13,7 @@ import id.widiarifki.movie.base.BaseActivity
 import id.widiarifki.movie.data.model.Genre
 import id.widiarifki.movie.databinding.ActivityGenreBinding
 import id.widiarifki.movie.presentation.movie.list.MovieListActivity
+import id.widiarifki.movie.presentation.watchlist.WatchlistActivity
 import id.widiarifki.movie.utils.Constant
 import id.widiarifki.movie.utils.ui.SpacedItemDecoration
 
@@ -28,6 +31,23 @@ class GenreActivity : BaseActivity<ActivityGenreBinding>(),
         setupList()
         setupListener()
         observeData()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_home, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.menu_watchlist -> gotoWatchlist()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun gotoWatchlist() {
+        val intent = Intent(this, WatchlistActivity::class.java)
+        startActivity(intent)
     }
 
     private fun setupList() {

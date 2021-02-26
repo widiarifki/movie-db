@@ -1,36 +1,42 @@
 package id.widiarifki.movie.utils
 
-class State(val code: Int, var message: String = "") {
+class State {
 
-    var requestPage: Int = 1
-        private set
-
-    companion object {
-        private const val LOADING = 1
-        private const val SUCCESS = 2
-        private const val FAILED = 3
-        private const val EMPTY_DATA = 4
-
-        fun setLoading(message: String?= null) : State {
-            return State(LOADING,message ?: "Memuat data..")
-        }
-
-        fun setSuccess(message: String?= null) : State {
-            return State(SUCCESS,message ?: "Sukses")
-        }
-
-        fun setFailed(message: String?= null) : State {
-            return State(FAILED,message ?: "Gagal memuat data")
-        }
-
-        fun setEmpty(message: String?= null) : State {
-            return State(EMPTY_DATA,message ?: "Data sudah termuat semua")
-        }
+    constructor(code: Int) {
+        this.code = code
+    }
+    constructor(code: Int, message: String) {
+        this.code = code
+    }
+    constructor(code: Int, throwable: Throwable) {
+        this.code = code
     }
 
-    fun setPage(page: Int): State {
-        this.requestPage = page
-        return this
+    var code: Int
+    var message: String? = null
+
+    companion object {
+        const val STATE_LOADING = 1
+        const val STATE_SUCCESS = 2
+        const val STATE_FAILED = 3
+
+        fun setLoading() : State {
+            return State(STATE_LOADING)
+        }
+
+        fun setSuccess() : State {
+            return State(STATE_SUCCESS)
+        }
+
+        fun setFailed(throwable: Throwable? = null) : State {
+            // todo: nanti dipertimbangkan error message handler mending dmna?
+            return State(STATE_FAILED, throwable?.message ?: "Gagal memuat/memproses data")
+            // todo: globalization/localization message
+        }
+
+        fun setFailed(message: String?) : State {
+            return State(STATE_FAILED, message ?: "Gagal memuat/memproses data")
+        }
     }
 
     fun setMessage(message: String?): State {
@@ -39,18 +45,14 @@ class State(val code: Int, var message: String = "") {
     }
 
     fun isLoading(): Boolean {
-        return this.code == LOADING
+        return this.code == STATE_LOADING
     }
 
     fun isSuccess(): Boolean {
-        return this.code == SUCCESS
+        return this.code == STATE_SUCCESS
     }
 
     fun isFail(): Boolean {
-        return this.code == FAILED
-    }
-
-    fun isLoadEmpty(): Boolean {
-        return this.code == EMPTY_DATA
+        return this.code == STATE_FAILED
     }
 }

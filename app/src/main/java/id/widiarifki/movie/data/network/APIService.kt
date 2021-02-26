@@ -1,16 +1,14 @@
 package id.widiarifki.movie.data.network
 
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.os.Build
 import id.widiarifki.movie.BuildConfig
-import id.widiarifki.movie.R
-import id.widiarifki.movie.data.network.wrapper.ResponseGenre
-import id.widiarifki.movie.data.network.wrapper.ResponseList
+import id.widiarifki.movie.data.model.MovieStatus
+import id.widiarifki.movie.data.network.wrapper.GenreListResponse
+import id.widiarifki.movie.data.network.wrapper.CommonListResponse
 import id.widiarifki.movie.data.model.Movie
 import id.widiarifki.movie.data.model.Review
 import id.widiarifki.movie.data.model.Video
+import id.widiarifki.movie.data.network.wrapper.PostResponse
 import okhttp3.ConnectionPool
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -19,19 +17,18 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
-import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 interface APIService {
 
     @GET("genre/movie/list")
-    suspend fun getGenre() : ResponseGenre
+    suspend fun getGenre() : GenreListResponse
 
     @GET("discover/movie")
     suspend fun getMovieByGenre(
         @Query("with_genres") genreId: Int?,
         @Query("page") page: Int
-    ): ResponseList<Movie>
+    ): CommonListResponse<Movie>
 
     @GET("movie/{id}")
     suspend fun getMovieDetail(
@@ -41,13 +38,46 @@ interface APIService {
     @GET("movie/{id}/videos")
     suspend fun getMovieVideos(
         @Path("id") id: Int
-    ): ResponseList<Video>
+    ): CommonListResponse<Video>
 
     @GET("movie/{id}/reviews")
     suspend fun getMovieReviews(
         @Path("id") id: Int?,
         @Query("page") page: Int
-    ): ResponseList<Review>
+    ): CommonListResponse<Review>
+
+    @GET("account/{account_id}/watchlist/movies")
+    suspend fun getWatchlist(
+            @Path("account_id") accountId: String = BuildConfig.ACCOUNT_ID,
+            @Query("session_id") sessionId: String = BuildConfig.SESSION_ID,
+            @Query("page") page: Int
+    ): CommonListResponse<Movie>
+
+    @FormUrlEncoded
+    @POST("account/{account_id}/watchlist")
+    suspend fun addToWatchlist(
+            @Path("account_id") accountId: String = BuildConfig.ACCOUNT_ID,
+            @Query("session_id") sessionId: String = BuildConfig.SESSION_ID,
+            @Field("media_type") mediaType: String = "movie",
+            @Field("watchlist") watchList: Boolean = true,
+            @Field("media_id") mediaId: Int?
+    ): PostResponse
+
+    @FormUrlEncoded
+    @POST("account/{account_id}/watchlist")
+    suspend fun removeFromWatchlist(
+            @Path("account_id") accountId: String = BuildConfig.ACCOUNT_ID,
+            @Query("session_id") sessionId: String = BuildConfig.SESSION_ID,
+            @Field("media_type") mediaType: String = "movie",
+            @Field("watchlist") watchList: Boolean = false,
+            @Field("media_id") mediaId: Int?
+    ): PostResponse
+
+    @GET("movie/{movie_id}/account_states")
+    suspend fun getMovieStatus(
+            @Path("movie_id") movieId: Int?,
+            @Query("session_id") sessionId: String = BuildConfig.SESSION_ID
+    ): MovieStatus
 
 
     companion object {
@@ -65,38 +95,6 @@ interface APIService {
                 chain.proceed(request)
             }
 
-            val connectionInterceptor = Interceptor { chain ->
-                val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    connectivityManager.activeNetwork?.let {
-                        val actNw = connectivityManager.getNetworkCapabilities(it)
-                        actNw?.let {
-                            when {
-                                actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-                                actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-                                actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-                                else -> throw IOException(context.getString(R.string.msg_error_no_connection))
-                            }
-                        } ?: run {
-                            throw IOException(context.getString(R.string.msg_error_no_connection))
-                        }
-                    } ?: run {
-                        throw IOException(context.getString(R.string.msg_error_no_connection))
-                    }
-                } else {
-                    connectivityManager.activeNetworkInfo?.run {
-                        when (type) {
-                            ConnectivityManager.TYPE_WIFI -> true
-                            ConnectivityManager.TYPE_MOBILE -> true
-                            ConnectivityManager.TYPE_ETHERNET -> true
-                            else -> throw IOException(context.getString(R.string.msg_error_no_connection))
-                        }
-                    }
-                }
-
-                val newRequest = chain.request().newBuilder().build()
-                chain.proceed(newRequest)
-            }
 
             val httpClient = OkHttpClient.Builder()
                 .connectTimeout(60, TimeUnit.SECONDS)
@@ -104,7 +102,7 @@ interface APIService {
                 .writeTimeout(60, TimeUnit.SECONDS)
                 .connectionPool(ConnectionPool(0,1, TimeUnit.NANOSECONDS))
                 .addInterceptor(logger)
-                .addInterceptor(connectionInterceptor)
+                //.addInterceptor(connectionInterceptor)
                 .addNetworkInterceptor(requestInterceptor)
                 .build()
 

@@ -2,11 +2,18 @@ package id.widiarifki.movie.utils
 
 class StatedData<T> {
 
-    lateinit var state: State
+    var state: State = State.setLoading()
     var data: T? = null
     var message: String = ""
         get() {
-            return if(state.message.isEmpty()) "Tampaknya terjadi kesalahan" else state.message
+            return if(state.message.isNullOrEmpty()) {
+                when (state.code) {
+                    State.STATE_LOADING -> "Loading"
+                    State.STATE_FAILED -> "Failed"
+                    State.STATE_SUCCESS -> "Success"
+                    else -> "State & message unknown"
+                }
+            } else state.message.orEmpty()
         }
         set(value) {
             field = value
@@ -29,5 +36,21 @@ class StatedData<T> {
 
     fun isFail() : Boolean {
         return state.isFail()
+    }
+
+    /**
+     * new
+     */
+    fun loading(): StatedData<T> {
+        return StatedData(State.setLoading())
+    }
+    fun success(data: T? = null): StatedData<T> {
+        return StatedData(State.setSuccess(), data)
+    }
+    fun fail(throwable: Throwable?): StatedData<T> {
+        return StatedData(State.setFailed(throwable))
+    }
+    fun fail(message: String?): StatedData<T> {
+        return StatedData(State.setFailed(message))
     }
 }

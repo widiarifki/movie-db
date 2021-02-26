@@ -2,18 +2,24 @@ package id.widiarifki.movie.presentation.movie.detail
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import dagger.hilt.android.AndroidEntryPoint
 import id.widiarifki.movie.R
 import id.widiarifki.movie.base.BaseActivity
+import id.widiarifki.movie.data.model.Movie
 import id.widiarifki.movie.databinding.ActivityMovieDetailBinding
 import id.widiarifki.movie.presentation.review.ReviewActivity
 import id.widiarifki.movie.utils.Constant
+import id.widiarifki.movie.utils.livedata.StatedData
 
 @AndroidEntryPoint
 class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
@@ -41,6 +47,34 @@ class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_movie_detail, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_watchlist_toggle -> addToWatchlist()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun addToWatchlist() {
+        viewModel.addToWatchlist(movieId).observe(this, {
+            when {
+                it.isLoading() -> showProgressDialog("Menambahkan ke watchlist..")
+                it.isSuccess() -> {
+                    hideProgressDialog()
+                    showToast("Berhasil menambahkan ke watchlist")
+                }
+                it.isError() -> {
+                    hideProgressDialog()
+                    showToast(it.getMessage())
+                }
+            }
+        })
+    }
+
     private fun setupListener() {
         binding.layoutLoadingError.btnRetry.setOnClickListener {
             observeData()
@@ -48,21 +82,37 @@ class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
     }
 
     private fun observeData() {
-        viewModel.getDetailInfo(movieId).observe(this, {
-            binding.isLoading = it.isLoading()
-            binding.isError = it.isFail()
-            binding.message = if (it.isFail()) it.message else null
-            binding.data = it.data
-        })
+        movieId?.let {
+            viewModel.getAllDetail(it).observe(this, {
+                bindDataToView(it)
+            })
+        } ?: kotlin.run {
+            finish()
+        }
+    }
 
-        viewModel.getYoutoubeTrailerVideo(movieId).observe(this, {
-            binding.isTrailerLoading = true
-            if (it.isSuccess()) {
-                it.data?.key?.let { videoId ->
-                    setupPlayer(videoId)
+    private fun bindDataToView(data: StatedData<Movie>?) {
+        data?.let {
+            binding.isLoading = it.isLoading()
+            if (!it.isLoading()) {
+                binding.isError = it.isError()
+                binding.message = if (it.isError()) it.getMessage() else null
+
+                if (it.data != null) {
+                    binding.data = it.data
+
+                    // Trailer
+                    binding.isTrailerLoading = true
+                    it.data?.ytTrailerKey?.let { videoId ->
+                        setupPlayer(videoId)
+                    } ?: run {
+                        binding.isTrailerLoading = false
+                    }
+
+                    // Movie status
                 }
             }
-        })
+        }
     }
 
     private fun setupPlayer(videoId: String) {
