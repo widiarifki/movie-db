@@ -12,7 +12,7 @@ import id.widiarifki.movie.R
 import id.widiarifki.movie.data.model.Movie
 import id.widiarifki.movie.databinding.ItemMovieBinding
 import id.widiarifki.movie.presentation.movie.detail.MovieDetailActivity
-import id.widiarifki.movie.utils.Constant
+import id.widiarifki.movie.utils.ParamConstant
 
 class MoviePagingAdapter : PagingDataAdapter<Movie, MoviePagingAdapter.ItemMovieHolder>(DiffCallback()) {
 
@@ -38,8 +38,8 @@ class MoviePagingAdapter : PagingDataAdapter<Movie, MoviePagingAdapter.ItemMovie
 
     private fun onClickMovie(data: Movie, context: Context) {
         val intent = Intent(context, MovieDetailActivity::class.java)
-        intent.putExtra(Constant.PARAM_MOVIE_ID, data.id)
-        intent.putExtra(Constant.PARAM_MOVIE_NAME, data.title)
+        intent.putExtra(ParamConstant.PARAM_MOVIE_ID, data.id)
+        intent.putExtra(ParamConstant.PARAM_MOVIE_NAME, data.title)
         (context as? Activity)?.startActivity(intent)
     }
 

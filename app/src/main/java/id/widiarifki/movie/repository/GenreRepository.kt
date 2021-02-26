@@ -12,7 +12,7 @@ class GenreRepository
     private val genreDao: GenreDao
 ) {
 
-    val cache: LiveData<List<Genre>?> get() = genreDao.getAll()
+    val cache: LiveData<List<Genre>> get() = genreDao.getAll()
 
     private suspend fun updateCache(data: List<Genre>) {
         genreDao.deleteAll()

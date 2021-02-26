@@ -1,6 +1,6 @@
 package id.widiarifki.movie.utils
 
-object Constant {
+object ParamConstant {
 
     const val PARAM_MOVIE_ID = "MOVIE_ID"
     const val PARAM_GENRE_ID = "GENRE_ID"

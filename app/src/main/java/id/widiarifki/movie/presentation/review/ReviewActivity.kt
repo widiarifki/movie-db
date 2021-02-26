@@ -9,7 +9,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import id.widiarifki.movie.R
 import id.widiarifki.movie.base.BaseActivity
 import id.widiarifki.movie.databinding.ActivityReviewBinding
-import id.widiarifki.movie.utils.Constant
+import id.widiarifki.movie.utils.ParamConstant
 import id.widiarifki.movie.utils.ui.PagingLoadStateAdapter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -32,8 +32,8 @@ class ReviewActivity : BaseActivity<ActivityReviewBinding>() {
 
     private fun handleIntent() {
         val extras = intent.extras
-        setupToolbar(String.format("Review: %s", extras?.getString(Constant.PARAM_MOVIE_NAME)), true)
-        extras?.getInt(Constant.PARAM_MOVIE_ID)?.let {
+        setupToolbar(String.format("Review: %s", extras?.getString(ParamConstant.PARAM_MOVIE_NAME)), true)
+        extras?.getInt(ParamConstant.PARAM_MOVIE_ID)?.let {
             movieId = it
         }
     }

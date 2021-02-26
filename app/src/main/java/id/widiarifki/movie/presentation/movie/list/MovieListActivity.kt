@@ -1,6 +1,5 @@
 package id.widiarifki.movie.presentation.movie.list
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -9,10 +8,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import id.widiarifki.movie.R
 import id.widiarifki.movie.base.BaseActivity
-import id.widiarifki.movie.data.model.Movie
 import id.widiarifki.movie.databinding.ActivityMovieListBinding
-import id.widiarifki.movie.presentation.movie.detail.MovieDetailActivity
-import id.widiarifki.movie.utils.Constant
+import id.widiarifki.movie.utils.ParamConstant
 import id.widiarifki.movie.utils.ui.PagingLoadStateAdapter
 import id.widiarifki.movie.utils.ui.SpacedItemDecoration
 import kotlinx.coroutines.flow.collectLatest
@@ -37,8 +34,8 @@ class MovieListActivity : BaseActivity<ActivityMovieListBinding>() {
 
     private fun handleIntent() {
         val extras = intent.extras
-        setupToolbar(extras?.getString(Constant.PARAM_GENRE_NAME), true)
-        extras?.getInt(Constant.PARAM_GENRE_ID)?.let {
+        setupToolbar(extras?.getString(ParamConstant.PARAM_GENRE_NAME), true)
+        extras?.getInt(ParamConstant.PARAM_GENRE_ID)?.let {
             genreId = it
         }
     }

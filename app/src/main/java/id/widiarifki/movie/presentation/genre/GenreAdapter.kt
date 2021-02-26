@@ -4,11 +4,13 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.qualifiers.ApplicationContext
 import id.widiarifki.movie.R
 import id.widiarifki.movie.data.model.Genre
 import id.widiarifki.movie.databinding.ItemGenreBinding
+import javax.inject.Inject
 
-class GenreAdapter(val context: Context, val list: ArrayList<Genre>) : RecyclerView.Adapter<GenreAdapter.ItemGenreHolder>() {
+class GenreAdapter(val list: ArrayList<Genre>) : RecyclerView.Adapter<GenreAdapter.ItemGenreHolder>() {
 
     var itemListener: ItemGenreListener? = null
 

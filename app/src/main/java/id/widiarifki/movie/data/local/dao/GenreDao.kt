@@ -11,7 +11,7 @@ import id.widiarifki.movie.data.model.Genre
 interface GenreDao {
 
     @Query("SELECT * from ${DatabaseConstant.TBL_GENRE}")
-    fun getAll() : LiveData<List<Genre>?>
+    fun getAll() : LiveData<List<Genre>>
 
     @Query("DELETE from ${DatabaseConstant.TBL_GENRE}")
     suspend fun deleteAll()

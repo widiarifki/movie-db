@@ -2,7 +2,6 @@ package id.widiarifki.movie.presentation.movie.detail
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -16,7 +15,7 @@ import id.widiarifki.movie.base.BaseActivity
 import id.widiarifki.movie.data.model.Movie
 import id.widiarifki.movie.databinding.ActivityMovieDetailBinding
 import id.widiarifki.movie.presentation.review.ReviewActivity
-import id.widiarifki.movie.utils.Constant
+import id.widiarifki.movie.utils.ParamConstant
 import id.widiarifki.movie.utils.livedata.StatedData
 
 @AndroidEntryPoint
@@ -41,8 +40,8 @@ class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
     private fun handleIntent() {
         val extras = intent.extras
         if (extras != null) {
-            movieId = extras.getInt(Constant.PARAM_MOVIE_ID)
-            movieName = extras.getString(Constant.PARAM_MOVIE_NAME)
+            movieId = extras.getInt(ParamConstant.PARAM_MOVIE_ID)
+            movieName = extras.getString(ParamConstant.PARAM_MOVIE_NAME)
         }
     }
 
@@ -179,8 +178,8 @@ class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
 
     fun showReview(view: View) {
         val intent = Intent(this, ReviewActivity::class.java)
-        intent.putExtra(Constant.PARAM_MOVIE_ID, movieId)
-        intent.putExtra(Constant.PARAM_MOVIE_NAME, movieName)
+        intent.putExtra(ParamConstant.PARAM_MOVIE_ID, movieId)
+        intent.putExtra(ParamConstant.PARAM_MOVIE_NAME, movieName)
         startActivity(intent)
     }
 

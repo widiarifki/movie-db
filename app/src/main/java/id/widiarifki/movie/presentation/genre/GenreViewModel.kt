@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import id.widiarifki.movie.data.model.Genre
-import id.widiarifki.movie.utils.StatedLiveData
+import id.widiarifki.movie.utils.livedata.StatedLiveData
 import id.widiarifki.movie.repository.GenreRepository
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -15,7 +15,7 @@ class GenreViewModel
     private val repository: GenreRepository
 ): ViewModel() {
 
-    val genresLiveData = StatedLiveData<List<Genre>?>()
+    val liveGenres: StatedLiveData<List<Genre>> = StatedLiveData()
 
     init {
         /**
@@ -25,23 +25,23 @@ class GenreViewModel
          * the UI will not be empty because genre data had been cached/stored on local
          * as a result from previous success network request
          */
-        genresLiveData.addSource(repository.cache) {
-            if (it?.isNotEmpty() == true)
-                genresLiveData.loaded(it)
+        liveGenres.addSource(repository.cache) {
+            //if (it?.isNotEmpty() == true) {
+                liveGenres.load(it)
+            //}
         }
-
         refreshGenre()
     }
 
     fun refreshGenre() {
         viewModelScope.launch {
             try {
-                if (genresLiveData.value?.data.isNullOrEmpty()) {
-                    genresLiveData.loading()
-                }
+                /*if (liveGenres.value?.data.isNullOrEmpty()) {
+                    liveGenres.loading()
+                }*/
                 repository.refreshData()
             } catch (e: Exception) {
-                genresLiveData.fail(e.message)
+                liveGenres.error(e.message)
             }
         }
     }

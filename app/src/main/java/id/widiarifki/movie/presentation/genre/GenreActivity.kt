@@ -2,6 +2,7 @@ package id.widiarifki.movie.presentation.genre
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
@@ -14,7 +15,7 @@ import id.widiarifki.movie.data.model.Genre
 import id.widiarifki.movie.databinding.ActivityGenreBinding
 import id.widiarifki.movie.presentation.movie.list.MovieListActivity
 import id.widiarifki.movie.presentation.watchlist.WatchlistActivity
-import id.widiarifki.movie.utils.Constant
+import id.widiarifki.movie.utils.ParamConstant
 import id.widiarifki.movie.utils.ui.SpacedItemDecoration
 
 @AndroidEntryPoint
@@ -23,7 +24,7 @@ class GenreActivity : BaseActivity<ActivityGenreBinding>(),
 
     private val viewModel: GenreViewModel by viewModels()
     private var genres: ArrayList<Genre> = ArrayList()
-    private var genreAdapter: GenreAdapter? = null
+    private var genreAdapter: GenreAdapter = GenreAdapter(genres)
 
     override val resourceLayout: Int = R.layout.activity_genre
 
@@ -51,7 +52,6 @@ class GenreActivity : BaseActivity<ActivityGenreBinding>(),
     }
 
     private fun setupList() {
-        genreAdapter = GenreAdapter(this, genres)
         binding.rvGenre.apply {
             adapter = genreAdapter
             layoutManager = GridLayoutManager(this@GenreActivity, 2, LinearLayoutManager.VERTICAL, false)
@@ -60,28 +60,50 @@ class GenreActivity : BaseActivity<ActivityGenreBinding>(),
     }
 
     private fun setupListener() {
-        genreAdapter?.itemListener = this
+        genreAdapter.itemListener = this
         binding.layoutLoadingError.btnRetry.setOnClickListener {
             viewModel.refreshGenre()
         }
     }
 
     private fun observeData() {
-        viewModel.genresLiveData.observe(this, {
-            binding.isLoading = it.isLoading()
-            binding.isError = it.isFail() || it.data.isNullOrEmpty()
-            if (it.data?.isNotEmpty() == true){
+        viewModel.liveGenres.observe(this, {
+            when {
+                it.isLoading() -> {
+                    binding.isLoading = true && it.data.isNullOrEmpty() && genres.isEmpty()
+                }
+                it.isError() -> {
+                    binding.isLoading = false
+                    binding.isError = true
+                    if (genres.isNotEmpty()) {
+                        showToast(binding.message)
+                    }
+                }
+                it.isSuccess() -> {
+                    binding.isLoading = false
+                    if (it.data.isNullOrEmpty() && genres.isEmpty()) {
+                        binding.isError = true
+                        binding.message = getString(R.string.msg_empty_category)
+                    } else {
+                        setAdapterData(it.data)
+                    }
+                }
+            }
+
+            /*binding.isLoading = it.isLoading() && it.data.isNullOrEmpty()
+            binding.isError = it.isError() || it.data.isNullOrEmpty()
+            if (it.data?.isNotEmpty() == true) {
                 setAdapterData(it.data)
-                if (it.isFail()) {
+                if (it.isError()) {
                     showToast(it.message)
                 }
             } else {
-                if (it.isFail()) {
+                if (it.isError()) {
                     binding.message = it.message
                 } else {
                     binding.message = getString(R.string.msg_empty_category)
                 }
-            }
+            }*/
         })
     }
 
@@ -95,8 +117,8 @@ class GenreActivity : BaseActivity<ActivityGenreBinding>(),
 
     override fun onClickGenre(data: Genre) {
         val intent = Intent(this, MovieListActivity::class.java)
-        intent.putExtra(Constant.PARAM_GENRE_ID, data.id)
-        intent.putExtra(Constant.PARAM_GENRE_NAME, data.name)
+        intent.putExtra(ParamConstant.PARAM_GENRE_ID, data.id)
+        intent.putExtra(ParamConstant.PARAM_GENRE_NAME, data.name)
         startActivity(intent)
     }
 
