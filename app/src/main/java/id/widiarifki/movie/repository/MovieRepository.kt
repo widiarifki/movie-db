@@ -84,19 +84,6 @@ class MovieRepository
         return liveData
     }
 
-    /*suspend fun getDetail(id: Int): StatedData<Movie> {
-        try {
-            val request = apiService.getMovieDetail(id)
-            if (request.isSuccessful) {
-                return StatedData.success(request.body())
-            } else {
-                return StatedData.error(request.message())
-            }
-        } catch (e: Exception) {
-            return StatedData.error(e.message)
-        }
-    }*/
-
     suspend fun addToWatchlist(movieId: Int?): StatedData<Boolean> {
         try {
             val request = apiService.addToWatchlist(mediaId = movieId)
