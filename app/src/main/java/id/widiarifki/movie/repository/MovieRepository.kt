@@ -14,7 +14,6 @@ import id.widiarifki.movie.repository.pagingsource.WatchlistPagingSource
 import id.widiarifki.movie.utils.livedata.StatedData
 import id.widiarifki.movie.utils.livedata.StatedLiveData
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class MovieRepository
@@ -28,12 +27,8 @@ class MovieRepository
 
     private suspend fun getVideos(movieId: Int): StatedData<List<Video>> {
         try {
-            val request = apiService.getMovieVideos(movieId)
-            if (request.success) {
-                return StatedData.load(request.results)
-            } else {
-                return StatedData.error(request.status_message)
-            }
+            val response = apiService.getMovieVideos(movieId)
+            return StatedData.load(response.results)
         } catch (e: Exception) {
             return StatedData.error(e.message)
         }
@@ -56,12 +51,8 @@ class MovieRepository
     suspend fun getLiveDetail(id: Int): StatedLiveData<Movie> {
         val liveData: StatedLiveData<Movie> = StatedLiveData()
         try {
-            val request = apiService.getMovieDetail(id)
-            if (request.isSuccessful) {
-                liveData.postValue(StatedData.load(request.body()))
-            } else {
-                liveData.postValue(StatedData.error(request.message()))
-            }
+            val movie = apiService.getMovieDetail(id)
+            liveData.postValue(StatedData.load(movie))
         } catch (e: Exception) {
             liveData.postValue(StatedData.error(e.message))
         }
@@ -77,7 +68,7 @@ class MovieRepository
         }?.let {
             liveData.postValue(StatedData.load(it))
         } ?: kotlin.run {
-            liveData.postValue(StatedData.error(videos.getMessage()))
+            liveData.postValue(StatedData.error(videos.message))
         }
         return liveData
     }
@@ -85,12 +76,8 @@ class MovieRepository
     suspend fun getLiveStatus(movieId: Int): LiveData<StatedData<MovieStatus>> {
         val liveData: MutableLiveData<StatedData<MovieStatus>> = MutableLiveData()
         try {
-            val request = apiService.getMovieStatus(movieId)
-            if (request.success) {
-                liveData.postValue(StatedData.load(request.data))
-            } else {
-                liveData.postValue(StatedData.error(request.status_message))
-            }
+            val movieStatus = apiService.getMovieStatus(movieId)
+            liveData.postValue(StatedData.load(movieStatus))
         } catch (e: Exception) {
             liveData.postValue(StatedData.error(e.message))
         }

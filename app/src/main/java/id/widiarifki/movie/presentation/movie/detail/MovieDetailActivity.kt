@@ -7,8 +7,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.lifecycleScope
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
@@ -28,6 +26,7 @@ class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
     private var movieId: Int? = null
     private var movieName: String? = null
     private var mYoutubePlayer: YouTubePlayer? = null
+    private var actionBarMenu: Menu? = null
 
     override val resourceLayout: Int
         get() = R.layout.activity_movie_detail
@@ -48,6 +47,7 @@ class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        actionBarMenu = menu
         menuInflater.inflate(R.menu.menu_movie_detail, menu)
         return super.onCreateOptionsMenu(menu)
     }
@@ -69,13 +69,14 @@ class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
                 }
                 it.isError() -> {
                     hideProgressDialog()
-                    showToast(it.getMessage())
+                    showToast(it.message)
                 }
             }
         })
     }
 
     private fun setupListener() {
+        //TODO: coba pindahin as data binding
         binding.layoutLoadingError.btnRetry.setOnClickListener {
             observeData()
         }
@@ -84,35 +85,46 @@ class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
     private fun observeData() {
         movieId?.let {
             viewModel.getAllDetail(it).observe(this, {
-                bindDataToView(it)
+                onDetailLoaded(it)
             })
         } ?: kotlin.run {
             finish()
         }
     }
 
-    private fun bindDataToView(data: StatedData<Movie>?) {
+    private fun onDetailLoaded(data: StatedData<Movie>?) {
         data?.let {
             binding.isLoading = it.isLoading()
             if (!it.isLoading()) {
                 binding.isError = it.isError()
-                binding.message = if (it.isError()) it.getMessage() else null
+                binding.message = if (it.isError()) it.message else null
 
-                if (it.data != null) {
-                    binding.data = it.data
+                // After data loaded
+                it.data?.let { data ->
+                    binding.data = data
 
                     // Trailer
-                    binding.isTrailerLoading = true
-                    it.data?.ytTrailerKey?.let { videoId ->
-                        setupPlayer(videoId)
-                    } ?: run {
-                        binding.isTrailerLoading = false
+                    if (binding.isTrailerReady != true) {
+                        // Condition only when trailer not defined as ready (prevent redundant)
+                        binding.isTrailerLoading = true
+                        data.ytTrailerKey?.let { videoId ->
+                            setupPlayer(videoId)
+                        } ?: run {
+                            binding.isTrailerLoading = false
+                        }
                     }
 
                     // Movie status
+                    toggleWatchlistFlag(data.isWatchlist)
                 }
             }
         }
+    }
+
+    private fun toggleWatchlistFlag(isWatchlist: Boolean?) {
+        val icon = if (isWatchlist == true) R.drawable.ic_action_bookmark_on else R.drawable.ic_action_bookmark_off
+        actionBarMenu?.findItem(R.id.menu_watchlist_toggle)
+                ?.setIcon(icon)
     }
 
     private fun setupPlayer(videoId: String) {
@@ -128,11 +140,11 @@ class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
                 }
 
                 override fun onStateChange(
-                    youTubePlayer: YouTubePlayer,
-                    state: PlayerConstants.PlayerState
+                        youTubePlayer: YouTubePlayer,
+                        state: PlayerConstants.PlayerState
                 ) {
                     super.onStateChange(youTubePlayer, state)
-                    when(state) {
+                    when (state) {
                         PlayerConstants.PlayerState.BUFFERING -> binding.isTrailerPlaying = true
                         PlayerConstants.PlayerState.PLAYING -> binding.isTrailerPlaying = true
                         PlayerConstants.PlayerState.PAUSED -> binding.isTrailerPlaying = true
@@ -144,8 +156,8 @@ class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
                 }
 
                 override fun onError(
-                    youTubePlayer: YouTubePlayer,
-                    error: PlayerConstants.PlayerError
+                        youTubePlayer: YouTubePlayer,
+                        error: PlayerConstants.PlayerError
                 ) {
                     super.onError(youTubePlayer, error)
                     binding.isTrailerLoading = false

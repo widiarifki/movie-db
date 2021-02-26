@@ -5,8 +5,5 @@ import id.widiarifki.movie.data.model.Genre
 
 data class GenreListResponse(
     @SerializedName("genres")
-    var results: List<Genre>? = null,
-    var success: Boolean = true,
-    var status_code: Int?,
-    var status_message: String?
+    var results: List<Genre>? = null
 )

@@ -52,7 +52,7 @@ class MovieDetailViewModel
                             }
                         }
                         it.isError() -> {
-                            mediatorLiveData.error(it.getMessage())
+                            mediatorLiveData.error(it.message)
                         }
                         else -> {
                             mediatorLiveData.loading()
@@ -84,7 +84,7 @@ class MovieDetailViewModel
             if (result.isSuccess()) {
                 liveData.success()
             } else {
-                liveData.error(result.getMessage())
+                liveData.error(result.message)
             }
         }
         return liveData
