@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:minWidth="@dimen/action_button_min_width"
+    android:paddingBottom="@dimen/action_bar_icon_vertical_padding"
+    android:paddingTop="@dimen/action_bar_icon_vertical_padding"
+    android:gravity="center">
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_action_bookmark_off"
+        android:id="@+id/icon"
+        android:visibility="invisible"/>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@id/icon"
+        android:layout_alignEnd="@id/icon"
+        android:layout_alignTop="@id/icon"
+        android:layout_alignBottom="@id/icon"
+        android:indeterminate="true"/>
+</RelativeLayout>

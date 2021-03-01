@@ -2,10 +2,15 @@ package id.widiarifki.movie.presentation.movie.detail
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
+import android.widget.ProgressBar
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
@@ -25,7 +30,7 @@ class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
     private var movieId: Int? = null
     private var movieName: String? = null
     private var mYoutubePlayer: YouTubePlayer? = null
-    private var actionBarMenu: Menu? = null
+    private var mMenu: Menu? = null
 
     override val resourceLayout: Int
         get() = R.layout.activity_movie_detail
@@ -40,58 +45,60 @@ class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
     private fun handleIntent() {
         val extras = intent.extras
         if (extras != null) {
-            movieId = extras.getInt(ParamConstant.PARAM_MOVIE_ID)
-            movieName = extras.getString(ParamConstant.PARAM_MOVIE_NAME)
+            movieId = extras.getInt(ParamConstant.MOVIE_ID)
+            movieName = extras.getString(ParamConstant.MOVIE_NAME)
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        actionBarMenu = menu
+        mMenu = menu
         menuInflater.inflate(R.menu.menu_movie_detail, menu)
+
+        menu?.findItem(R.id.menu_set_watchlist)?.actionView?.setOnClickListener {
+            binding.data?.isWatchlist?.let {
+                viewModel.updateWatchlist(!it)
+            }
+        }
+
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_watchlist_toggle -> addToWatchlist()
+            R.id.menu_set_watchlist -> {
+                /*binding.data?.isWatchlist?.let {
+                    viewModel.updateWatchlist(!it)
+                } ?: run {
+                    return false
+                }*/
+            }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun addToWatchlist() {
-        viewModel.addToWatchlist(movieId).observe(this, {
-            when {
-                it.isLoading() -> showProgressDialog("Menambahkan ke watchlist..")
-                it.isSuccess() -> {
-                    hideProgressDialog()
-                    showToast("Berhasil menambahkan ke watchlist")
-                }
-                it.isError() -> {
-                    hideProgressDialog()
-                    showToast(it.message)
-                }
-            }
-        })
     }
 
     private fun setupListener() {
         //TODO: coba pindahin as data binding
         binding.layoutLoadingError.btnRetry.setOnClickListener {
+            // todo: ini belum jalan
+            viewModel.liveMovieDetail.removeObservers(this)
             observeData()
         }
     }
 
     private fun observeData() {
-        movieId?.let {
-            viewModel.getAllDetail(it).observe(this, {
-                onDetailLoaded(it)
-            })
-        } ?: kotlin.run {
-            finish()
-        }
+        viewModel.liveMovieDetail.observe(this, {
+            updateUIDetail(it)
+        })
+
+        viewModel.liveWatchlistStatus.observe(this, {
+            when {
+                it.isSuccess() -> updateUIWatchlist(it.data)
+                it.isError() -> showToast(it.message)
+            }
+        })
     }
 
-    private fun onDetailLoaded(data: StatedData<Movie>?) {
+    private fun updateUIDetail(data: StatedData<Movie>?) {
         data?.let {
             binding.isLoading = it.isLoading()
             if (!it.isLoading()) {
@@ -114,16 +121,34 @@ class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
                     }
 
                     // Movie status
-                    toggleWatchlistFlag(data.isWatchlist)
+                    // TODO: ini dipisahin aja
+                    //setWatchlistToView(data.isWatchlist)
                 }
             }
         }
     }
 
-    private fun toggleWatchlistFlag(isWatchlist: Boolean?) {
-        val icon = if (isWatchlist == true) R.drawable.ic_action_bookmark_on else R.drawable.ic_action_bookmark_off
-        actionBarMenu?.findItem(R.id.menu_watchlist_toggle)
-                ?.setIcon(icon)
+    private fun updateUIWatchlist(isWatchlist: Boolean?) {
+        binding.data?.isWatchlist = isWatchlist
+        val menuWatchlist = mMenu?.findItem(R.id.menu_set_watchlist)
+
+        menuWatchlist?.actionView?.apply {
+            val imgIcon = findViewById<ImageView>(R.id.icon)
+            val progressBar = findViewById<ProgressBar>(R.id.progressBar)
+            if (isWatchlist == null) {
+                imgIcon?.visibility = View.INVISIBLE
+                progressBar?.visibility = View.VISIBLE
+            } else {
+                imgIcon?.apply {
+                    visibility = View.VISIBLE
+                    val iconRes = if (isWatchlist == true) R.drawable.ic_action_bookmark_on else R.drawable.ic_action_bookmark_off
+                    setImageDrawable(
+                        ContextCompat.getDrawable(this@MovieDetailActivity, iconRes)
+                    )
+                }
+                progressBar?.visibility = View.INVISIBLE
+            }
+        }
     }
 
     private fun setupPlayer(videoId: String) {
@@ -178,8 +203,8 @@ class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
 
     fun showReview(view: View) {
         val intent = Intent(this, ReviewActivity::class.java)
-        intent.putExtra(ParamConstant.PARAM_MOVIE_ID, movieId)
-        intent.putExtra(ParamConstant.PARAM_MOVIE_NAME, movieName)
+        intent.putExtra(ParamConstant.MOVIE_ID, movieId)
+        intent.putExtra(ParamConstant.MOVIE_NAME, movieName)
         startActivity(intent)
     }
 

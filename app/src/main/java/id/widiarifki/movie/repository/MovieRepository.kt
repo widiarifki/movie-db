@@ -1,10 +1,12 @@
 package id.widiarifki.movie.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.PagingState
 import id.widiarifki.movie.data.network.APIService
 import id.widiarifki.movie.data.model.Movie
 import id.widiarifki.movie.data.model.MovieStatus
@@ -13,7 +15,8 @@ import id.widiarifki.movie.repository.pagingsource.MoviePagingSource
 import id.widiarifki.movie.repository.pagingsource.WatchlistPagingSource
 import id.widiarifki.movie.utils.livedata.StatedData
 import id.widiarifki.movie.utils.livedata.StatedLiveData
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 class MovieRepository
@@ -26,19 +29,37 @@ class MovieRepository
     }
 
     private suspend fun getVideos(movieId: Int): StatedData<List<Video>> {
-        try {
+        return try {
             val response = apiService.getMovieVideos(movieId)
-            return StatedData.load(response.results)
+            StatedData.load(response.results)
         } catch (e: Exception) {
-            return StatedData.error(e.message)
+            StatedData.error(e.message)
         }
     }
 
     fun getPagingMovies(genreId: Int?): Flow<PagingData<Movie>> {
-        return Pager(
+        val pagingSource = MoviePagingSource(apiService, genreId)
+        val pager = Pager(
             config = PagingConfig(enablePlaceholders = false, pageSize = NETWORK_PAGE_SIZE),
-            pagingSourceFactory = { MoviePagingSource(apiService, genreId) }
-        ).flow
+            pagingSourceFactory = { pagingSource }
+        )
+        return pager
+            .flow
+            .onEach {
+
+                Log.v("CURRENTPAGE", pagingSource.currentPage.toString())
+                if (pagingSource.currentPage == pagingSource.defaultStartPage) {
+                    //Log.v("CURRENTPAGE", pagingSource.currentPage.toString())
+                }
+            }
+            .onEmpty {
+                if (pagingSource.currentPage == pagingSource.defaultStartPage) {
+                    // todo: load dari cache aja
+                }
+            }
+            .catch {
+                // todo: load dari cache aja
+            }
     }
 
     fun getPagingWatchlist(): Flow<PagingData<Movie>> {
@@ -73,27 +94,23 @@ class MovieRepository
         return liveData
     }
 
-    suspend fun getLiveStatus(movieId: Int): LiveData<StatedData<MovieStatus>> {
-        val liveData: MutableLiveData<StatedData<MovieStatus>> = MutableLiveData()
+    suspend fun getLiveStatus(movieId: Int): StatedLiveData<MovieStatus> {
+        val liveData: StatedLiveData<MovieStatus> = StatedLiveData()
         try {
             val movieStatus = apiService.getMovieStatus(movieId)
-            liveData.postValue(StatedData.load(movieStatus))
+            liveData.load(movieStatus)
         } catch (e: Exception) {
-            liveData.postValue(StatedData.error(e.message))
+            liveData.error(e.message)
         }
         return liveData
     }
 
-    suspend fun addToWatchlist(movieId: Int?): StatedData<Boolean> {
+    suspend fun updateWatchlist(movieId: Int, updateValue: Boolean): Boolean? {
         try {
-            val request = apiService.addToWatchlist(mediaId = movieId)
-            if (request.success) {
-                return StatedData.success()
-            } else {
-                return StatedData.error(request.status_message)
-            }
+            val request = apiService.updateWatchlist(mediaId = movieId, watchList = updateValue)
+            return request.success
         } catch (e: Exception) {
-            return StatedData.error(e.message)
+            throw (e)
         }
     }
 

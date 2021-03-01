@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:title="@string/watchlist"
-        android:id="@+id/menu_watchlist_toggle"
-        android:icon="@drawable/ic_action_bookmark_off"
-        app:showAsAction="always"/>
+        android:id="@+id/menu_set_watchlist"
+        app:showAsAction="always"
+        android:title=""
+        app:actionLayout="@layout/action_loading_watchlist"/>
 </menu>

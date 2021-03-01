@@ -18,16 +18,18 @@ class MoviePagingSource(
     private val genreId: Int?
 ): PagingSource<Int, Movie>() {
 
-    private val DEFAULT_STARTING_PAGE = 1
+    val defaultStartPage = 1
+    var currentPage = defaultStartPage
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Movie> {
         val page = params.key ?: 1
         try {
             val response = apiService.getMovieByGenre(genreId, page)
             val movies = response.results.orEmpty()
+            currentPage = page
             return LoadResult.Page(
                 data = movies,
-                prevKey = if (page == DEFAULT_STARTING_PAGE) null else page-1,
+                prevKey = if (page == defaultStartPage) null else page-1,
                 nextKey = if (movies.isEmpty()) null else page+1
             )
         } catch (exception: IOException) {

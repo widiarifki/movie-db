@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import id.widiarifki.movie.data.local.dao.GenreDao
 import id.widiarifki.movie.data.model.Genre
 
-@Database(entities = [Genre::class], version = DatabaseConstant.DB_VERSION)
+@Database(entities = [Genre::class], version = DatabaseConstant.DB_VERSION, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun genreDao() : GenreDao

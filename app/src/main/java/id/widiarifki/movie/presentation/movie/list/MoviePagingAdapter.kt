@@ -38,8 +38,8 @@ class MoviePagingAdapter : PagingDataAdapter<Movie, MoviePagingAdapter.ItemMovie
 
     private fun onClickMovie(data: Movie, context: Context) {
         val intent = Intent(context, MovieDetailActivity::class.java)
-        intent.putExtra(ParamConstant.PARAM_MOVIE_ID, data.id)
-        intent.putExtra(ParamConstant.PARAM_MOVIE_NAME, data.title)
+        intent.putExtra(ParamConstant.MOVIE_ID, data.id)
+        intent.putExtra(ParamConstant.MOVIE_NAME, data.title)
         (context as? Activity)?.startActivity(intent)
     }
 

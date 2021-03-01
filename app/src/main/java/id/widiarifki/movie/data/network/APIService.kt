@@ -72,21 +72,11 @@ interface APIService {
 
     @FormUrlEncoded
     @POST("account/{account_id}/watchlist")
-    suspend fun addToWatchlist(
+    suspend fun updateWatchlist(
             @Path("account_id") accountId: String = BuildConfig.ACCOUNT_ID,
             @Query("session_id") sessionId: String = BuildConfig.SESSION_ID,
             @Field("media_type") mediaType: String = "movie",
-            @Field("watchlist") watchList: Boolean = true,
-            @Field("media_id") mediaId: Int?
-    ): PostResponse
-
-    @FormUrlEncoded
-    @POST("account/{account_id}/watchlist")
-    suspend fun removeFromWatchlist(
-            @Path("account_id") accountId: String = BuildConfig.ACCOUNT_ID,
-            @Query("session_id") sessionId: String = BuildConfig.SESSION_ID,
-            @Field("media_type") mediaType: String = "movie",
-            @Field("watchlist") watchList: Boolean = false,
+            @Field("watchlist") watchList: Boolean,
             @Field("media_id") mediaId: Int?
     ): PostResponse
 

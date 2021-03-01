@@ -23,26 +23,11 @@ data class StatedData<T> (
         return status_code == STATE_ERROR
     }
 
-    fun loading(): StatedData<T> {
-        return StatedData.loading()
-    }
-
-    fun load(data: T?): StatedData<T> {
-        return StatedData.load(data)
-    }
-
-    fun success(): StatedData<T> {
-        return StatedData.success()
-    }
-
-    fun error(message: String?): StatedData<T> {
-        return StatedData.error(message)
-    }
-
     companion object {
         const val STATE_LOADING = 1
         const val STATE_SUCCESS = 2
         const val STATE_ERROR = 3
+        const val STATE_EMPTY = 4
 
         fun <T> loading(): StatedData<T> {
             return StatedData(STATE_LOADING)
@@ -56,8 +41,16 @@ data class StatedData<T> (
             return StatedData(STATE_SUCCESS)
         }
 
+        fun <T> empty(): StatedData<T> {
+            return StatedData(STATE_EMPTY)
+        }
+
         fun <T> error(message: String?): StatedData<T> {
             return StatedData(STATE_ERROR, status_message = message)
+        }
+
+        fun <T> error(error: Throwable): StatedData<T> {
+            return StatedData(STATE_ERROR, status_message = error.message)
         }
     }
 }

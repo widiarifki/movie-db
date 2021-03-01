@@ -23,4 +23,8 @@ class StatedLiveData<T> : MediatorLiveData<StatedData<T>>() {
     fun error(message: String?) {
         postValue(StatedData.error(message ?: "Global error message"))
     }
+
+    fun error(error: Throwable) {
+        postValue(StatedData.error(error))
+    }
 }

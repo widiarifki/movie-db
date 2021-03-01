@@ -34,8 +34,8 @@ class MovieListActivity : BaseActivity<ActivityMovieListBinding>() {
 
     private fun handleIntent() {
         val extras = intent.extras
-        setupToolbar(extras?.getString(ParamConstant.PARAM_GENRE_NAME), true)
-        extras?.getInt(ParamConstant.PARAM_GENRE_ID)?.let {
+        setupToolbar(extras?.getString(ParamConstant.GENRE_NAME), true)
+        extras?.getInt(ParamConstant.GENRE_ID)?.let {
             genreId = it
         }
     }

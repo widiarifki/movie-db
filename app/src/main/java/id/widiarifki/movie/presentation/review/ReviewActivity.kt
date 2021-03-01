@@ -32,8 +32,8 @@ class ReviewActivity : BaseActivity<ActivityReviewBinding>() {
 
     private fun handleIntent() {
         val extras = intent.extras
-        setupToolbar(String.format("Review: %s", extras?.getString(ParamConstant.PARAM_MOVIE_NAME)), true)
-        extras?.getInt(ParamConstant.PARAM_MOVIE_ID)?.let {
+        setupToolbar(String.format("Review: %s", extras?.getString(ParamConstant.MOVIE_NAME)), true)
+        extras?.getInt(ParamConstant.MOVIE_ID)?.let {
             movieId = it
         }
     }

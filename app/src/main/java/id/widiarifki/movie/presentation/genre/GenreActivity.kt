@@ -2,7 +2,6 @@ package id.widiarifki.movie.presentation.genre
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
@@ -117,8 +116,8 @@ class GenreActivity : BaseActivity<ActivityGenreBinding>(),
 
     override fun onClickGenre(data: Genre) {
         val intent = Intent(this, MovieListActivity::class.java)
-        intent.putExtra(ParamConstant.PARAM_GENRE_ID, data.id)
-        intent.putExtra(ParamConstant.PARAM_GENRE_NAME, data.name)
+        intent.putExtra(ParamConstant.GENRE_ID, data.id)
+        intent.putExtra(ParamConstant.GENRE_NAME, data.name)
         startActivity(intent)
     }
 
