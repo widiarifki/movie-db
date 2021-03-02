@@ -186,7 +186,7 @@
         </ScrollView>
         <include
             android:id="@+id/layoutLoadingError"
-            layout="@layout/base_loading_error"
+            layout="@layout/base_loading_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
