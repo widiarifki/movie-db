@@ -78,7 +78,7 @@ interface APIService {
             @Field("media_type") mediaType: String = "movie",
             @Field("watchlist") watchList: Boolean,
             @Field("media_id") mediaId: Int?
-    ): PostResponse
+    ): PostResponse // TODO:
 
 
     companion object {
@@ -89,12 +89,12 @@ interface APIService {
                     .readTimeout(60, TimeUnit.SECONDS)
                     .writeTimeout(60, TimeUnit.SECONDS)
                     .connectionPool(ConnectionPool(0, 1, TimeUnit.NANOSECONDS))
+                    .addNetworkInterceptor(UrlRequestInterceptor())
                     .addInterceptor(HttpLoggingInterceptor().apply {
                         level = HttpLoggingInterceptor.Level.BODY
                     })
-                    .addInterceptor(FailResponseInterceptor(context))
                     .addInterceptor(ConnectivityInterceptor(context))
-                    .addNetworkInterceptor(UrlRequestInterceptor())
+                    .addInterceptor(FailResponseInterceptor(context))
                     .build()
 
             return Retrofit.Builder()

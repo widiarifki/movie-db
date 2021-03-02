@@ -10,7 +10,7 @@ class UrlRequestInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         var request = chain.request()
         val urlBuilder = request.url.newBuilder()
-        val modifiedUrl = urlBuilder.addQueryParameter(APIConstant.FIELD_API_KEY, BuildConfig.API_KEY).build()
+        val modifiedUrl = urlBuilder.addQueryParameter(APIConstant.PARAM_API_KEY, BuildConfig.API_KEY).build()
         request = request.newBuilder().url(modifiedUrl).build()
         return chain.proceed(request)
     }

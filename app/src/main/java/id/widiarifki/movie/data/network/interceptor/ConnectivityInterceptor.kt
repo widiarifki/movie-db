@@ -33,6 +33,7 @@ class ConnectivityInterceptor(val context: Context) : Interceptor {
                 throw IOException(context.getString(R.string.msg_error_no_connection))
             }
         } else {
+            // TODO: handle the deprecation
             connectivityManager.activeNetworkInfo?.run {
                 when (type) {
                     ConnectivityManager.TYPE_WIFI -> true
