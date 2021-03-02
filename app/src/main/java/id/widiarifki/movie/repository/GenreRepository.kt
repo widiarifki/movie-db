@@ -15,7 +15,7 @@ class GenreRepository
 
     val cache: LiveData<List<Genre>> get() = genreDao.getAll()
 
-    suspend fun fetchGenreList(): StatedLiveData<List<Genre>> {
+    suspend fun getGenres(): StatedLiveData<List<Genre>> {
         val liveData = StatedLiveData<List<Genre>>()
         try {
             val request = apiService.getGenre()

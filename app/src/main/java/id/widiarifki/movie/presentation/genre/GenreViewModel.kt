@@ -1,17 +1,11 @@
 package id.widiarifki.movie.presentation.genre
 
-import android.util.Log
-import android.view.View
-import android.widget.Button
-import androidx.databinding.BindingAdapter
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import id.widiarifki.movie.data.model.Genre
 import id.widiarifki.movie.utils.livedata.StatedLiveData
 import id.widiarifki.movie.repository.GenreRepository
-import id.widiarifki.movie.utils.livedata.StatedData
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -46,7 +40,7 @@ class GenreViewModel
             viewModelScope.launch {
                 if (cacheData.isNullOrEmpty()) genres.loading()
 
-                genres.addSource(repository.fetchGenreList()) {
+                genres.addSource(repository.getGenres()) {
                     when {
                         it.isError() -> if (cacheData.isNullOrEmpty()) genres.error(it.message)
                         it.isSuccess() -> if (it.data.isNullOrEmpty()) genres.empty()
