@@ -16,21 +16,32 @@ import id.widiarifki.movie.presentation.movie.list.MovieListActivity
 import id.widiarifki.movie.presentation.watchlist.WatchlistActivity
 import id.widiarifki.movie.utils.ParamConstant
 import id.widiarifki.movie.utils.ui.SpacedItemDecoration
+import kotlinx.android.synthetic.main.activity_genre.*
 
 @AndroidEntryPoint
 class GenreActivity : BaseActivity<ActivityGenreBinding>(),
     GenreAdapter.ItemGenreListener {
 
-    private val viewModel: GenreViewModel by viewModels()
+    private val genreViewModel: GenreViewModel by viewModels()
     private var genres: ArrayList<Genre> = ArrayList()
-    private var genreAdapter: GenreAdapter = GenreAdapter(genres)
 
     override val resourceLayout: Int = R.layout.activity_genre
 
     override fun onViewReady(savedInstanceState: Bundle?) {
-        setupList()
+        binding.apply {
+            viewModel = genreViewModel
+            lifecycleOwner = this@GenreActivity
+        }
+
+        setupListView()
         setupListener()
         observeData()
+    }
+
+    private fun setupListener() {
+        refreshLayout.setOnRefreshListener {
+            genreViewModel.retry()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -50,67 +61,29 @@ class GenreActivity : BaseActivity<ActivityGenreBinding>(),
         startActivity(intent)
     }
 
-    private fun setupList() {
+    private fun setupListView() {
         binding.rvGenre.apply {
-            adapter = genreAdapter
+            adapter = GenreAdapter(genres).withListener(this@GenreActivity)
             layoutManager = GridLayoutManager(this@GenreActivity, 2, LinearLayoutManager.VERTICAL, false)
             addItemDecoration(SpacedItemDecoration(this@GenreActivity))
         }
     }
 
-    private fun setupListener() {
-        genreAdapter.itemListener = this
-        binding.layoutLoadingError.btnRetry.setOnClickListener {
-            viewModel.refreshGenre()
-        }
-    }
-
     private fun observeData() {
-        viewModel.liveGenres.observe(this, {
+        genreViewModel.genres.observe(this, {
+            refreshLayout.isRefreshing = it.isLoading()
             when {
-                it.isLoading() -> {
-                    binding.isLoading = true && it.data.isNullOrEmpty() && genres.isEmpty()
-                }
-                it.isError() -> {
-                    binding.isLoading = false
-                    binding.isError = true
-                    if (genres.isNotEmpty()) {
-                        showToast(binding.message)
-                    }
-                }
                 it.isSuccess() -> {
-                    binding.isLoading = false
-                    if (it.data.isNullOrEmpty() && genres.isEmpty()) {
-                        binding.isError = true
-                        binding.message = getString(R.string.msg_empty_category)
-                    } else {
-                        setAdapterData(it.data)
-                    }
+                    updateGenres(it.data)
                 }
             }
-
-            /*binding.isLoading = it.isLoading() && it.data.isNullOrEmpty()
-            binding.isError = it.isError() || it.data.isNullOrEmpty()
-            if (it.data?.isNotEmpty() == true) {
-                setAdapterData(it.data)
-                if (it.isError()) {
-                    showToast(it.message)
-                }
-            } else {
-                if (it.isError()) {
-                    binding.message = it.message
-                } else {
-                    binding.message = getString(R.string.msg_empty_category)
-                }
-            }*/
         })
     }
 
-    private fun setAdapterData(data: List<Genre>?) {
+    private fun updateGenres(data: List<Genre>?) {
         if(data?.isNotEmpty() == true) {
             genres.clear()
             genres.addAll(data)
-            genreAdapter?.notifyDataSetChanged()
         }
     }
 

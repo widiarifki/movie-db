@@ -23,6 +23,18 @@ data class StatedData<T> (
         return status_code == STATE_ERROR
     }
 
+    fun isEmpty(): Boolean {
+        return status_code == STATE_EMPTY
+    }
+
+    fun isLoaded(): Boolean {
+        return status_code == STATE_SUCCESS
+    }
+
+    fun isNotLoaded(): Boolean {
+        return status_code == STATE_LOADING || status_code == STATE_ERROR || status_code == STATE_EMPTY
+    }
+
     companion object {
         const val STATE_LOADING = 1
         const val STATE_SUCCESS = 2
@@ -50,6 +62,7 @@ data class StatedData<T> (
         }
 
         fun <T> error(error: Throwable): StatedData<T> {
+            // todo, create variable to store throwable/exception
             return StatedData(STATE_ERROR, status_message = error.message)
         }
     }

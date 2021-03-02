@@ -34,6 +34,11 @@ class GenreAdapter(val list: ArrayList<Genre>) : RecyclerView.Adapter<GenreAdapt
         return ItemGenreHolder(ItemGenreBinding.bind(view))
     }
 
+    fun withListener(listener: ItemGenreListener): GenreAdapter {
+        itemListener = listener
+        return this
+    }
+
     interface ItemGenreListener {
         fun onClickGenre(data: Genre)
     }

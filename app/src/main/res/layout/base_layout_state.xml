@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="android.view.View"/>
+        <import type="kotlin.jvm.functions.Function0"/>
+        <import type="kotlin.Unit"/>
+        <!--<variable name="dataState" type="id.widiarifki.movie.utils.livedata.StatedData" />-->
+        <variable name="isLoading" type="Boolean" />
+        <variable name="isError" type="Boolean" />
+        <variable name="isEmpty" type="Boolean" />
+        <variable name="message" type="String" />
+        <variable name="enableRetry" type="Boolean" />
+        <variable name="retryCallback" type="Function0&lt;Unit>" />
+    </data>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include
+            layout="@layout/base_layout_empty"
+            android:visibility="@{isEmpty ? View.VISIBLE : View.GONE, default=gone}"
+            app:message="@{message}"
+            app:enableRetry="@{enableRetry}"
+            app:retryCallback="@{retryCallback}"/>
+        <include
+            layout="@layout/base_layout_error"
+            android:visibility="@{isError ? View.VISIBLE : View.GONE, default=gone}"
+            app:message="@{message}"
+            app:enableRetry="@{enableRetry}"
+            app:retryCallback="@{retryCallback}"/>
+        <include
+            layout="@layout/base_layout_loading"
+            android:visibility="@{isLoading ? View.VISIBLE : View.GONE, default=visible}"/>
+    </RelativeLayout>
+</layout>

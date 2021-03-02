@@ -4,29 +4,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <import type="android.view.View"/>
-        <variable name="isLoading" type="Boolean" />
-        <variable name="isError" type="Boolean" />
-        <variable name="message" type="String" />
+        <variable name="viewModel" type="id.widiarifki.movie.presentation.genre.GenreViewModel" />
     </data>
-    <RelativeLayout
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp">
-        <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/refreshLayout">
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/rvGenre"
-            android:visibility="@{isLoading ? View.GONE : View.VISIBLE, default=gone}"/>
-        <include
-            android:id="@+id/layoutLoadingError"
-            layout="@layout/base_loading_error"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:visibility="@{isLoading || isError ? View.VISIBLE : View.GONE, default=visible}"
-            app:isLoading="@{isLoading}"
-            app:message="@{message}"/>
-    </RelativeLayout>
+            android:layout_height="match_parent"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp">
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/rvGenre"
+                android:visibility="@{viewModel.genres.loaded ? View.VISIBLE : View.GONE, default=gone}"/>
+                <!--
+                Here goes the global layout for loading state, error state, empty state
+                -->
+                <include layout="@layout/base_layout_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:visibility="@{viewModel.genres.notLoaded ? View.VISIBLE : View.GONE, default=visible}"
+                    app:isLoading="@{viewModel.genres.loading}"
+                    app:isError="@{viewModel.genres.error}"
+                    app:isEmpty="@{viewModel.genres.empty}"
+                    app:message="@{viewModel.genres.message}"
+                    app:enableRetry="@{viewModel.enableRetry}"
+                    app:retryCallback="@{() -> viewModel.retry()}"/>
+        </RelativeLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

@@ -1,10 +1,12 @@
 <resources>
     <string name="app_name">Movie DB</string>
     <string name="msg_error_no_connection">Tidak ada koneksi internet</string>
-    <string name="msg_error_global">Gagal memuat atau memproses data</string>
+    <string name="msg_error_global">Terjadi kesalahan saat memuat data</string>
     <string name="msg_empty_movie">Tidak ditemukan film di kategori ini</string>
     <string name="msg_empty_category">Tidak ditemukan data kategori</string>
+    <string name="msg_empty_global">Tidak ditemukan ada data</string>
     <string name="msg_loading_global">Loading..</string>
     <string name="watchlist">Watchlist</string>
     <string name="msg_empty_yttrailer">Tidak ditemukan video trailer</string>
+    <string name="btn_retry">Coba lagi</string>
 </resources>

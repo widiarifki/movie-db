@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import id.widiarifki.movie.data.network.APIService
 import id.widiarifki.movie.data.local.dao.GenreDao
 import id.widiarifki.movie.data.model.Genre
+import id.widiarifki.movie.utils.livedata.StatedLiveData
 import javax.inject.Inject
 
 class GenreRepository
@@ -14,19 +15,23 @@ class GenreRepository
 
     val cache: LiveData<List<Genre>> get() = genreDao.getAll()
 
-    private suspend fun updateCache(data: List<Genre>) {
-        genreDao.deleteAll()
-        genreDao.insert(data)
-    }
-
-    suspend fun refreshData() {
+    suspend fun fetchGenreList(): StatedLiveData<List<Genre>> {
+        val liveData = StatedLiveData<List<Genre>>()
         try {
             val request = apiService.getGenre()
-            if (request.results?.isNotEmpty() == true) {
-                updateCache(request.results!!)
-            }
+            liveData.load(request.results)
+
+            updateCache(request.results)
         } catch (e: Exception) {
-            throw Exception(e)
+            liveData.error(e)
+        }
+        return liveData
+    }
+
+    private suspend fun updateCache(data: List<Genre>?) {
+        if (!data.isNullOrEmpty()) {
+            genreDao.deleteAll()
+            genreDao.insert(data)
         }
     }
 

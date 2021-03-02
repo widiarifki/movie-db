@@ -12,12 +12,12 @@ class StatedLiveData<T> : MediatorLiveData<StatedData<T>>() {
         postValue(StatedData.loading())
     }
 
-    fun success() {
-        postValue(StatedData.success())
-    }
-
     fun load(data: T?) {
         postValue(StatedData.load(data))
+    }
+
+    fun empty() {
+        postValue(StatedData.empty())
     }
 
     fun error(message: String?) {
