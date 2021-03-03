@@ -5,5 +5,5 @@
         android:id="@+id/menu_set_watchlist"
         app:showAsAction="always"
         android:title=""
-        app:actionLayout="@layout/action_loading_watchlist"/>
+        app:actionLayout="@layout/menu_item_toggle_watchlist"/>
 </menu>

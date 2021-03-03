@@ -16,6 +16,10 @@ class StatedLiveData<T> : MediatorLiveData<StatedData<T>>() {
         postValue(StatedData.load(data))
     }
 
+    fun success() {
+        postValue(StatedData.success())
+    }
+
     fun empty() {
         postValue(StatedData.empty())
     }

@@ -10,7 +10,6 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
@@ -54,7 +53,7 @@ class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
         mMenu = menu
         menuInflater.inflate(R.menu.menu_movie_detail, menu)
 
-        menu?.findItem(R.id.menu_set_watchlist)?.actionView?.setOnClickListener {
+        menu?.findItem(R.id.menu_set_watchlist)?.actionView?.rootView?.setOnClickListener {
             binding.data?.isWatchlist?.let {
                 viewModel.updateWatchlist(!it)
             }
@@ -80,19 +79,22 @@ class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
         //TODO: coba pindahin as data binding
         binding.layoutLoadingError.btnRetry.setOnClickListener {
             // todo: ini belum jalan
-            viewModel.liveMovieDetail.removeObservers(this)
+            viewModel.movieDetail.removeObservers(this)
             observeData()
         }
     }
 
     private fun observeData() {
-        viewModel.liveMovieDetail.observe(this, {
+        viewModel.movieDetail.observe(this, {
             updateUIDetail(it)
+            if (it.isError()) {
+                mMenu?.findItem(R.id.menu_set_watchlist)?.isVisible = false
+            }
         })
 
-        viewModel.liveWatchlistStatus.observe(this, {
+        viewModel.watchlistStatus.observe(this, {
             when {
-                it.isSuccess() -> updateUIWatchlist(it.data)
+                it.isLoading() || it.isSuccess() -> updateUIWatchlist(it.data)
                 it.isError() -> showToast(it.message)
             }
         })
@@ -129,6 +131,7 @@ class MovieDetailActivity : BaseActivity<ActivityMovieDetailBinding>() {
     }
 
     private fun updateUIWatchlist(isWatchlist: Boolean?) {
+        Log.v("TAG-WATCHLIST", isWatchlist.toString())
         binding.data?.isWatchlist = isWatchlist
         val menuWatchlist = mMenu?.findItem(R.id.menu_set_watchlist)
 
